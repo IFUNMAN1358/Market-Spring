@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/css/main/register.css">
+</head>
+<body>
+
+<h2>Регистрация</h2>
+
+<form th:method="POST" th:action="@{/register}" th:object="${user}">
+    <div>
+        <label for="name">Имя</label>
+        <input type="text" id="name" th:field="*{name}" placeholder="Введите имя" required>
+        <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+
+        <br/>
+
+        <label for="surname">Фамилия</label>
+        <input type="text" id="surname" th:field="*{surname}" placeholder="Введите фамилию" required>
+        <div style="color:red" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Name error</div>
+
+        <br/>
+
+        <label for="email">Email</label>
+        <input type="text" id="email" th:field="*{email}" placeholder="Введите email" required>
+        <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Name error</div>
+
+        <br/>
+
+        <label for="Password">Пароль</label>
+        <input type="text" id="password" th:field="*{password}" placeholder="Введите пароль" required>
+        <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Name error</div>
+
+        <button type="submit">Зарегестрироваться</button>
+    </div>
+</form>
+
+</body>
+</html>
