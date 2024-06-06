@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,13 +32,11 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String toLogin(@Valid @ModelAttribute("user") User user) {
-//        UserDetails foundUser = userService.loadUserByUsername(user.getEmail());
-//        System.out.println(user.getPassword());
-//        System.out.println(foundUser.getPassword());
-//        if (!userService.CheckPassword(user.getPassword(), foundUser.getPassword())) {
-//            throw new WrongPasswordException("Password incorrect");
-//        }
+    public String toLogin(@Valid @ModelAttribute("user") User user,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "/main/login";
+        }
         return "redirect:/";
     }
 

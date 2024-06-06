@@ -27,14 +27,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-//    public boolean CheckPassword(String rawPassword, String encodedPassword) {
-//        return passwordEncoder.matches(rawPassword, encodedPassword);
-//    }
-
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.getUserByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User with this email not found"));
+        User user = userRepository.getUserByEmail(email);
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .build();
     }
 
     public void saveUser(User user) throws UserAlreadyExistsException {

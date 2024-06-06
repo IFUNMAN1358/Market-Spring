@@ -1,4 +1,4 @@
-package ru.nag.spring.config;
+package ru.nag.spring.config.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.nag.spring.service.CustomUserDetailsService;
@@ -28,7 +27,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder
                 .userDetailsService(userService)
                 .passwordEncoder(passwordEncoder);
@@ -41,16 +41,17 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/logout").permitAll() // Разрешить доступ к указанным страницам
                 .requestMatchers("/profile/**").authenticated() // Запретить доступ к страницам профиля для неавторизованных пользователей
-                //.anyRequest().permitAll() // Разрешить доступ ко всем остальным страницам
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login") // Указать страницу входа
-                .defaultSuccessUrl("/", true) // Перенаправлять на главную страницу после успешного входа
+                .loginPage("/login")
+                .usernameParameter("email")
+                .defaultSuccessUrl("/", true)
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/logout") // Указать URL для выхода из аккаунта
-                .logoutSuccessUrl("/login") // Перенаправлять на страницу входа после выхода
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
                 .permitAll()
             );
         return http.build();
