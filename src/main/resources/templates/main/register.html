@@ -30,7 +30,7 @@
         <br/>
 
         <label for="Password">Пароль</label>
-        <input type="text" id="password" th:field="*{password}" placeholder="Введите пароль" required>
+        <input type="password" id="password" th:field="*{password}" placeholder="Введите пароль" required>
         <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Name error</div>
 
         <button type="submit">Зарегестрироваться</button>
