@@ -15,7 +15,7 @@ import ru.nag.spring.exception.UserAlreadyExistsException;
 import ru.nag.spring.service.UserService;
 
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class RegisterController {
 

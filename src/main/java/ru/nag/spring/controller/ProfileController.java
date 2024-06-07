@@ -10,7 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import ru.nag.spring.domain.JwtAuthentication;
 import ru.nag.spring.exception.UserNotFoundException;
+import ru.nag.spring.service.AuthService;
 import ru.nag.spring.service.UserService;
 
 import java.util.UUID;
@@ -21,13 +23,14 @@ import java.util.UUID;
 public class ProfileController {
 
     private final UserService userService;
+    private final AuthService authService;
 
 
-//    @GetMapping("/profile")
-//    @PreAuthorize("hasAuthority('USER')")
-//    public ResponseEntity<String> getProfile() {
-//        final JwtAuthentication authInfo = authService.getAuthInfo();
-//        return ResponseEntity.ok("Hello user " + authInfo.getPrincipal() + "!");
-//    }
+    @GetMapping("/profile")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<String> getProfile() {
+        final JwtAuthentication authInfo = authService.getAuthInfo();
+        return ResponseEntity.ok("Hello user " + authInfo.getPrincipal() + "!");
+    }
 
 }

@@ -2,7 +2,6 @@ package ru.nag.spring.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,14 +14,13 @@ import ru.nag.spring.exception.UserNotFoundException;
 import ru.nag.spring.repository.RoleRepository;
 import ru.nag.spring.repository.UserRepository;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+
+import java.util.*;
 
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService{
 
     private final String USER_ROLE = "USER";
 
@@ -47,6 +45,22 @@ public class UserService {
         user.setRoles(roles);
 
         userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User with this email not found"));
+
+        List<String> roles = user.getRoles().stream()
+                                 .map(Role::getName)
+                                 .toList();
+
+        return org.springframework.security.core.userdetails.User.builder()
+                        .username(user.getEmail())
+                        .password(user.getPassword())
+                        .roles(roles.toArray(new String[0]))
+                        .build();
     }
 
     public User getUserById(UUID id) throws UserNotFoundException {
