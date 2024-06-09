@@ -1,4 +1,4 @@
-package ru.nag.spring.jwt;
+package ru.nag.spring.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

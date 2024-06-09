@@ -2,9 +2,6 @@ package ru.nag.spring.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.nag.spring.domain.Role;
@@ -22,8 +19,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserService{
 
-    private final String USER_ROLE = "USER";
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -38,7 +33,7 @@ public class UserService{
         );
 
 
-        Role role = roleRepository.getRoleByName(USER_ROLE);
+        Role role = roleRepository.getRoleByName("ROLE_USER");
 
         Set<Role> roles = new HashSet<>();
         roles.add(role);

@@ -1,4 +1,4 @@
-package ru.nag.spring.jwt;
+package ru.nag.spring.controller;
 
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.nag.spring.exception.UserNotFoundException;
+import ru.nag.spring.service.AuthService;
+import ru.nag.spring.dto.request.JwtRequest;
+import ru.nag.spring.dto.response.JwtResponse;
+import ru.nag.spring.dto.request.RefreshJwtRequest;
 
 @RestController
 @RequestMapping

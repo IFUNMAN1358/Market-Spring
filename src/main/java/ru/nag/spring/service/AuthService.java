@@ -1,4 +1,4 @@
-package ru.nag.spring.jwt;
+package ru.nag.spring.service;
 
 import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
@@ -9,10 +9,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.nag.spring.domain.User;
 import ru.nag.spring.exception.UserNotFoundException;
-import ru.nag.spring.service.UserService;
+import ru.nag.spring.jwt.JwtAuthentication;
+import ru.nag.spring.jwt.JwtProvider;
+import ru.nag.spring.dto.request.JwtRequest;
+import ru.nag.spring.dto.response.JwtResponse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Service
@@ -30,7 +34,7 @@ public class AuthService {
         if (passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             final String accessToken = jwtProvider.generateAccessToken(user);
             final String refreshToken = jwtProvider.generateRefreshToken(user);
-            refreshStorage.put(user.getEmail(), refreshToken);
+            refreshStorage.put(user.getId().toString(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
         } else {
             throw new AuthException("Неправильный пароль");
@@ -40,10 +44,10 @@ public class AuthService {
     public JwtResponse getAccessToken(@NonNull String refreshToken) throws UserNotFoundException {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            final String email = claims.getSubject();
-            final String saveRefreshToken = refreshStorage.get(email);
+            final String id = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(id);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.getUserByEmail(email);
+                final User user = userService.getUserById(UUID.fromString(id));
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 return new JwtResponse(accessToken, null);
             }
@@ -54,13 +58,13 @@ public class AuthService {
     public JwtResponse refresh(@NonNull String refreshToken) throws UserNotFoundException, AuthException {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            final String email = claims.getSubject();
-            final String saveRefreshToken = refreshStorage.get(email);
+            final String id = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(id);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.getUserByEmail(email);
+                final User user = userService.getUserById(UUID.fromString(id));
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 final String newRefreshToken = jwtProvider.generateRefreshToken(user);
-                refreshStorage.put(user.getEmail(), newRefreshToken);
+                refreshStorage.put(user.getId().toString(), newRefreshToken);
                 return new JwtResponse(accessToken, newRefreshToken);
             }
         }

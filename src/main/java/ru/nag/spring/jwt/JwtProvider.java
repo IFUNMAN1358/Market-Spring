@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.nag.spring.domain.User;
-import ru.nag.spring.domain.Role;
 import ru.nag.spring.service.UserService;
 
 import javax.crypto.SecretKey;
@@ -17,10 +16,8 @@ import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Component
@@ -30,8 +27,6 @@ public class JwtProvider {
     private final SecretKey jwtRefreshSecret;
     private final Integer accessExpireMinutes;
     private final Integer refreshExpireDays;
-
-    private final UserService userService;
 
     public JwtProvider(
             @Value("${jwt.secret.access}") String jwtAccessSecret,
@@ -44,7 +39,6 @@ public class JwtProvider {
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
         this.accessExpireMinutes = accessExpireMinutes;
         this.refreshExpireDays = refreshExpireDays;
-        this.userService = userService;
     }
 
     public String generateAccessToken(@NonNull User user) {
@@ -53,7 +47,7 @@ public class JwtProvider {
         final Instant accessExpirationInstant = now.plusMinutes(accessExpireMinutes).atZone(ZoneId.systemDefault()).toInstant();
         final Date accessExpiration = Date.from(accessExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(user.getId().toString())
                 .setExpiration(accessExpiration)
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
@@ -65,7 +59,7 @@ public class JwtProvider {
         final Instant refreshExpirationInstant = now.plusDays(refreshExpireDays).atZone(ZoneId.systemDefault()).toInstant();
         final Date refreshExpiration = Date.from(refreshExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(user.getId().toString())
                 .setExpiration(refreshExpiration)
                 .signWith(jwtRefreshSecret)
                 .compact();

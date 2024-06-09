@@ -3,16 +3,14 @@ package ru.nag.spring.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.nag.spring.domain.Role;
 import ru.nag.spring.domain.User;
 import ru.nag.spring.exception.UserNotFoundException;
-import ru.nag.spring.jwt.AuthService;
-import ru.nag.spring.jwt.EmailRequest;
+import ru.nag.spring.service.AuthService;
+import ru.nag.spring.dto.request.EmailRequest;
 import ru.nag.spring.jwt.JwtAuthentication;
 import ru.nag.spring.service.UserService;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @RestController
