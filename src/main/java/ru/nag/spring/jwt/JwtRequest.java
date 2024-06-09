@@ -1,14 +1,13 @@
-package ru.nag.spring.domain;
+package ru.nag.spring.jwt;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-
-@AllArgsConstructor
 @Setter
 @Getter
-public class LoginRequest {
+public class JwtRequest {
+
     private String email;
     private String password;
+
 }

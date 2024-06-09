@@ -1,5 +1,4 @@
-package ru.nag.spring.service;
-
+package ru.nag.spring.jwt;
 
 import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
@@ -8,16 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.nag.spring.domain.JwtAuthentication;
-import ru.nag.spring.domain.JwtRequest;
-import ru.nag.spring.domain.JwtResponse;
 import ru.nag.spring.domain.User;
 import ru.nag.spring.exception.UserNotFoundException;
-import ru.nag.spring.exception.WrongPasswordException;
+import ru.nag.spring.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 
 @Service
@@ -25,34 +20,30 @@ import java.util.UUID;
 public class AuthService {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
 
+    public JwtResponse login(@NonNull JwtRequest authRequest) throws UserNotFoundException, AuthException {
+        final User user = userService.getUserByEmail(authRequest.getEmail());
 
-    public JwtResponse login(@NonNull JwtRequest loginForm) throws UserNotFoundException, WrongPasswordException {
-        final User user = userService.getUserByEmail(loginForm.getEmail());
-
-        if (passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             final String accessToken = jwtProvider.generateAccessToken(user);
             final String refreshToken = jwtProvider.generateRefreshToken(user);
-
-            refreshStorage.put(user.getId().toString(), refreshToken);
+            refreshStorage.put(user.getEmail(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
         } else {
-            throw new WrongPasswordException("Invalid password");
+            throw new AuthException("Неправильный пароль");
         }
     }
 
     public JwtResponse getAccessToken(@NonNull String refreshToken) throws UserNotFoundException {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
-
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            final String id = claims.getSubject();
-            final String saveRefreshToken = refreshStorage.get(id);
-
+            final String email = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(email);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.getUserById(UUID.fromString(id));
+                final User user = userService.getUserByEmail(email);
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 return new JwtResponse(accessToken, null);
             }
@@ -62,16 +53,14 @@ public class AuthService {
 
     public JwtResponse refresh(@NonNull String refreshToken) throws UserNotFoundException, AuthException {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
-
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            final String id = claims.getSubject();
-            final String saveRefreshToken = refreshStorage.get(id);
-
+            final String email = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(email);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.getUserById(UUID.fromString(id));
+                final User user = userService.getUserByEmail(email);
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 final String newRefreshToken = jwtProvider.generateRefreshToken(user);
-                refreshStorage.put(user.getId().toString(), newRefreshToken);
+                refreshStorage.put(user.getEmail(), newRefreshToken);
                 return new JwtResponse(accessToken, newRefreshToken);
             }
         }
@@ -81,4 +70,5 @@ public class AuthService {
     public JwtAuthentication getAuthInfo() {
         return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
     }
+
 }

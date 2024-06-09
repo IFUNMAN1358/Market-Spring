@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -53,4 +54,8 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    public Set<String> getRoles() {
+        return roles.stream().map(Role::getAuthority).collect(Collectors.toSet());
+    }
 }

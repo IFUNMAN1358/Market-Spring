@@ -2,6 +2,7 @@ package ru.nag.spring.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @Column(name = "id", insertable = false, updatable = false, nullable = false)
@@ -24,6 +25,12 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
 
-    public Role(String s) {
+    public Role(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.name;
     }
 }

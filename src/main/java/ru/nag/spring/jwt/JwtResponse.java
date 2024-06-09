@@ -1,9 +1,7 @@
-package ru.nag.spring.domain;
-
+package ru.nag.spring.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 
 @Getter
 @AllArgsConstructor

@@ -1,4 +1,4 @@
-package ru.nag.spring.domain;
+package ru.nag.spring.jwt;
 
 import lombok.Getter;
 import lombok.Setter;

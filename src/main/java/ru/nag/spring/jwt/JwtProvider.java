@@ -1,47 +1,59 @@
-package ru.nag.spring.service;
-
+package ru.nag.spring.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.security.Keys;
 import ru.nag.spring.domain.User;
+import ru.nag.spring.domain.Role;
+import ru.nag.spring.service.UserService;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class JwtProvider {
 
-    private final Integer ACCESS_TOKEN_EXPIRE_MINUTES = 5;
-    private final Integer REFRESH_TOKEN_EXPIRE_DAYS = 30;
-
     private final SecretKey jwtAccessSecret;
     private final SecretKey jwtRefreshSecret;
+    private final Integer accessExpireMinutes;
+    private final Integer refreshExpireDays;
+
+    private final UserService userService;
 
     public JwtProvider(
             @Value("${jwt.secret.access}") String jwtAccessSecret,
-            @Value("${jwt.secret.refresh}") String jwtRefreshSecret
+            @Value("${jwt.secret.refresh}") String jwtRefreshSecret,
+            @Value("${jwt.access.expire.minutes}") Integer accessExpireMinutes,
+            @Value("${jwt.refresh.expire.days}") Integer refreshExpireDays,
+            UserService userService
     ) {
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
+        this.accessExpireMinutes = accessExpireMinutes;
+        this.refreshExpireDays = refreshExpireDays;
+        this.userService = userService;
     }
 
     public String generateAccessToken(@NonNull User user) {
+
         final LocalDateTime now = LocalDateTime.now();
-        final Instant accessExpirationInstant = now.plusMinutes(ACCESS_TOKEN_EXPIRE_MINUTES).atZone(ZoneId.systemDefault()).toInstant();
+        final Instant accessExpirationInstant = now.plusMinutes(accessExpireMinutes).atZone(ZoneId.systemDefault()).toInstant();
         final Date accessExpiration = Date.from(accessExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.getId().toString())
+                .setSubject(user.getEmail())
                 .setExpiration(accessExpiration)
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
@@ -50,10 +62,10 @@ public class JwtProvider {
 
     public String generateRefreshToken(@NonNull User user) {
         final LocalDateTime now = LocalDateTime.now();
-        final Instant refreshExpirationInstant = now.plusDays(REFRESH_TOKEN_EXPIRE_DAYS).atZone(ZoneId.systemDefault()).toInstant();
+        final Instant refreshExpirationInstant = now.plusDays(refreshExpireDays).atZone(ZoneId.systemDefault()).toInstant();
         final Date refreshExpiration = Date.from(refreshExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.getId().toString())
+                .setSubject(user.getEmail())
                 .setExpiration(refreshExpiration)
                 .signWith(jwtRefreshSecret)
                 .compact();

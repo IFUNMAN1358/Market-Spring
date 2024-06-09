@@ -1,24 +1,26 @@
-package ru.nag.spring.domain;
+package ru.nag.spring.jwt;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import ru.nag.spring.domain.Role;
 
 import java.util.Collection;
 import java.util.Set;
 
+
 @Getter
 @Setter
-public class JwtAuthentication implements Authentication {
+public class JwtAuthentication implements Authentication{
 
     private boolean authenticated;
-    private String id;
+    private String email;
     private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return java.util.Set.of();
+        return roles;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class JwtAuthentication implements Authentication {
     public Object getDetails() { return null; }
 
     @Override
-    public Object getPrincipal() { return id; }
+    public Object getPrincipal() { return email; }
 
     @Override
     public boolean isAuthenticated() { return authenticated; }
@@ -40,6 +42,6 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return "";
+        return email;
     }
 }

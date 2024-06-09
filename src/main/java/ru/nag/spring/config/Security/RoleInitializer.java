@@ -21,9 +21,8 @@ public class RoleInitializer {
 
     @PostConstruct
     public void init() {
-        addRoleIfNotExists(1, "USER");
-        addRoleIfNotExists(2, "ADMIN");
-        addRoleIfNotExists(3, "TEACHER");
+        addRoleIfNotExists(1, "ROLE_USER");
+        addRoleIfNotExists(2, "ROLE_ADMIN");
     }
 
     private void addRoleIfNotExists(Integer id, String roleName) {

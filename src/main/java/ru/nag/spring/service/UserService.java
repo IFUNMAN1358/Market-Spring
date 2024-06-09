@@ -20,7 +20,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService{
+public class UserService{
 
     private final String USER_ROLE = "USER";
 
@@ -45,22 +45,6 @@ public class UserService implements UserDetailsService{
         user.setRoles(roles);
 
         userRepository.save(user);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User with this email not found"));
-
-        List<String> roles = user.getRoles().stream()
-                                 .map(Role::getName)
-                                 .toList();
-
-        return org.springframework.security.core.userdetails.User.builder()
-                        .username(user.getEmail())
-                        .password(user.getPassword())
-                        .roles(roles.toArray(new String[0]))
-                        .build();
     }
 
     public User getUserById(UUID id) throws UserNotFoundException {
