@@ -1,9 +1,9 @@
 <template>
-  <div id="app">
+  <div class="main-wrapper">
     <Header />
-
-    <router-view></router-view>
-
+    <div class="content">
+      <router-view></router-view>
+    </div>
     <Footer />
   </div>
 </template>
@@ -21,16 +21,27 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
-}
-
-#app {
+  font-family: 'Roboto', sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>

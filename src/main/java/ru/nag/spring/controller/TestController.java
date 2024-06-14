@@ -3,7 +3,6 @@ package ru.nag.spring.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.nag.spring.exception.UserNotFoundException;
 import ru.nag.spring.service.AuthService;
 import ru.nag.spring.jwt.JwtAuthentication;
 
@@ -14,11 +13,6 @@ import ru.nag.spring.jwt.JwtAuthentication;
 public class TestController {
 
     private final AuthService authService;
-
-    @GetMapping("/test")
-    public ResponseEntity<String> TEST() throws UserNotFoundException {
-        return ResponseEntity.ok("ok");
-    }
 
     @GetMapping("/user")
     public ResponseEntity<String> helloUser() {

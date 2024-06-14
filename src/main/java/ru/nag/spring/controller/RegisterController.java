@@ -1,39 +1,33 @@
 package ru.nag.spring.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.nag.spring.domain.User;
+import ru.nag.spring.dto.request.RegisterForm;
 import ru.nag.spring.exception.UserAlreadyExistsException;
 import ru.nag.spring.service.UserService;
 
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class RegisterController {
 
     private final UserService userService;
 
-
-    @GetMapping("/register")
-    public String getRegister(Model model) {
-        model.addAttribute("user", new User());
-        return "/main/register";
-    }
-
     @PostMapping("/register")
-    public String toRegister(@Valid @ModelAttribute("user") User user,
-                             BindingResult bindingResult) throws UserAlreadyExistsException {
-        if (bindingResult.hasErrors()) {
-            return "/main/register";
+    public ResponseEntity<String> toRegister(@RequestBody RegisterForm registerForm) {
+        try {
+            User user = new User();
+            user.setName(registerForm.getName());
+            user.setSurname(registerForm.getSurname());
+            user.setEmail(registerForm.getEmail());
+            user.setPassword(registerForm.getPassword());
+            userService.saveUser(user);
+            return ResponseEntity.ok("User has been registered");
+        } catch (UserAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        userService.saveUser(user);
-        return "redirect:/";
     }
 
 }
