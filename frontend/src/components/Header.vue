@@ -1,7 +1,7 @@
 <template>
   <header>
     <nav class="navbar navbar-expand-lg navbar-custom">
-      <a class="navbar-brand" href="">
+      <a class="navbar-brand" href="" @click.prevent="showMain">
         <img src="@/img/PetFoodLogo.png" alt="Logo" class="header-logo">
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,7 +10,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
-            <a class="nav-link" href="">ГЛАВНАЯ</a>
+            <a class="nav-link" href="" @click.prevent="showMain">ГЛАВНАЯ</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="">КАТАЛОГ</a>
@@ -20,65 +20,31 @@
           </li>
         </ul>
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
+          <li class="nav-item" v-if="!isAuthenticated">
             <a class="nav-link large-nav-link" href="" @click.prevent="showLogin">ВХОД</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="!isAuthenticated">
             <a class="nav-link large-nav-link" href="" @click.prevent="showRegistration">РЕГИСТРАЦИЯ</a>
+          </li>
+          <li class="nav-item" v-if="isAuthenticated">
+            <a class="nav-link large-nav-link" href="" @click.prevent="showProfile">ПРОФИЛЬ</a>
           </li>
         </ul>
       </div>
     </nav>
-    <LoginComponent v-if="isLogin" @logined="closeLogin"/>
-    <RegisterComponent v-if="isRegistration" @registered="closeRegistration"/>
-    <RoleComponent v-if="isRoles" @roled="closeRoles"/>
   </header>
 </template>
 
 <script>
-import RegisterComponent from './RegisterComponent.vue';
-import LoginComponent from './LoginComponent.vue';
-import RoleComponent from "./RoleComponent.vue";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: 'HeaderComponent',
-  components: {
-    RoleComponent,
-    RegisterComponent,
-    LoginComponent
-  },
-  data() {
-    return {
-      isRegistration: false,
-      isLogin: false,
-      isRoles: false
-    };
+  computed: {
+    ...mapState(['isAuthenticated'])
   },
   methods: {
-    showRegistration() {
-      this.isRegistration = true;
-      this.isLogin = false;
-      this.isRoles = false;
-    },
-    closeRegistration() {
-      this.isRegistration = false;
-    },
-    showLogin() {
-      this.isLogin = true;
-      this.isRegistration = false;
-      this.isRoles = false;
-    },
-    closeLogin() {
-      this.isLogin = false;
-    },
-    showRoles() {
-      this.isRoles = true;
-      this.isLogin = false;
-      this.isRegistration = false;
-    },
-    closeRoles() {
-      this.isLogin = false;
-    }
+    ...mapActions(['showMain', 'showRegistration', 'showLogin', 'showRoles', 'showProfile'])
   }
 };
 </script>

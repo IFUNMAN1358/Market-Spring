@@ -17,6 +17,7 @@
 
 <script>
 import axios from 'axios';
+import { mapActions } from "vuex";
 
 export default {
   name: 'LoginComponent',
@@ -27,6 +28,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['saveJwtTokens']),
     async login() {
       try {
         const response = await axios.post('/login', {
@@ -35,10 +37,11 @@ export default {
         });
         console.log('Successful login');
 
-        this.$cookies.set("accessToken", response.data.accessToken);
-        this.$cookies.set("refreshToken", response.data.refreshToken);
-
-        this.$emit('logined');
+        await this.saveJwtTokens({
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken
+        });
+        this.$emit('closeLogin');
 
       } catch (error) {
         console.error('Ошибка при входе:', error.response ? error.response.data : error.message);

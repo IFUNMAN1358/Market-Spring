@@ -55,7 +55,7 @@ export default {
           password: this.password
         });
         console.log(response.data);
-        this.$emit('registered');
+        this.$emit('closeRegistration');
       } catch (error) {
         console.error('Ошибка при регистрации:', error.response ? error.response.data : error.message);
         alert('Ошибка при регистрации');

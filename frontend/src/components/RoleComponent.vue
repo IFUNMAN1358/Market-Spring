@@ -35,7 +35,6 @@ export default {
           }
         });
         console.log('Admin response:', response.data);
-        this.$emit('roled');
       } catch (error) {
         console.error('Error with ADMIN request:', error.response ? error.response.data : error.message);
       }

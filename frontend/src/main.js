@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
+import store from './js/store';
 import axios from 'axios';
 import VueCookies from 'vue-cookies';
 
@@ -12,4 +13,5 @@ axios.defaults.baseURL = 'http://localhost:8000';
 
 createApp(App)
 .use(VueCookies)
+.use(store)
 .mount('#app');
