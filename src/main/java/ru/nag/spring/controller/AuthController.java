@@ -3,18 +3,15 @@ package ru.nag.spring.controller;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.nag.spring.exception.UserNotFoundException;
 import ru.nag.spring.service.AuthService;
 import ru.nag.spring.dto.request.JwtRequest;
 import ru.nag.spring.dto.response.JwtResponse;
 import ru.nag.spring.dto.request.RefreshJwtRequest;
 
+
 @RestController
-@RequestMapping
 @RequiredArgsConstructor
 public class AuthController {
 

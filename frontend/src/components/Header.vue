@@ -13,10 +13,10 @@
             <a class="nav-link" href="" @click.prevent="showMain">ГЛАВНАЯ</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="">КАТАЛОГ</a>
+            <a class="nav-link" href="" @click.prevent="showCatalog">КАТАЛОГ</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="" @click.prevent="showRoles">РОЛИ</a>
+            <a class="nav-link" href="">ПОДДЕРЖКА</a>
           </li>
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -25,6 +25,9 @@
           </li>
           <li class="nav-item" v-if="!isAuthenticated">
             <a class="nav-link large-nav-link" href="" @click.prevent="showRegistration">РЕГИСТРАЦИЯ</a>
+          </li>
+          <li class="nav-item" v-if="isAuthenticated">
+            <a class="nav-link large-nav-link" href="">КОРЗИНА</a>
           </li>
           <li class="nav-item" v-if="isAuthenticated">
             <a class="nav-link large-nav-link" href="" @click.prevent="showProfile">ПРОФИЛЬ</a>
@@ -44,7 +47,7 @@ export default {
     ...mapState(['isAuthenticated'])
   },
   methods: {
-    ...mapActions(['showMain', 'showRegistration', 'showLogin', 'showRoles', 'showProfile'])
+    ...mapActions(['showMain', 'showRegistration', 'showLogin', 'showProfile', 'showCatalog'])
   }
 };
 </script>

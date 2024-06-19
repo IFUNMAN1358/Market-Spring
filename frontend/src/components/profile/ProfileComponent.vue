@@ -8,8 +8,8 @@
     </div>
     <div class="profile-actions">
       <button @click="fetchOrderHistory">История заказов</button>
+      <button @click.prevent="showSettings">Настройки</button>
       <button @click="logout">Выйти из аккаунта</button>
-<!--      <button @click="deleteAccount" class="delete-account">Удалить аккаунт</button>-->
     </div>
     <div v-if="orders.length" class="order-history">
       <h3>История заказов</h3>
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { mapActions } from 'vuex';
 
 export default {
@@ -37,11 +36,11 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['removeTokens']),
+    ...mapActions(['removeTokens', 'showSettings']),
     async fetchUserData() {
       try {
         const token = this.$cookies.get('accessToken');
-        const response = await axios.get('/user', {
+        const response = await this.$axios.get('/user', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -67,17 +66,6 @@ export default {
         console.error('Ошибка при выходе из аккаунта:', error.response ? error.response.data : error.message);
       }
     },
-    // async deleteAccount() {
-    //   if (confirm('Вы уверены, что хотите удалить свой аккаунт? Это действие необратимо.')) {
-    //     try {
-    //       await axios.delete('/user/profile');
-    //       this.$store.dispatch('logout');
-    //       this.$router.push('/register');
-    //     } catch (error) {
-    //       console.error('Ошибка при удалении аккаунта:', error.response ? error.response.data : error.message);
-    //     }
-    //   }
-    // }
   },
   created() {
     this.fetchUserData();
@@ -135,14 +123,5 @@ export default {
 
 .profile-actions button:hover {
   background-color: #a7bf8f;
-}
-
-.profile-actions .delete-account {
-  background-color: #FF6347;
-  color: white;
-}
-
-.profile-actions .delete-account:hover {
-  background-color: #ff4d33;
 }
 </style>

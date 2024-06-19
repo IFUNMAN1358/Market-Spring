@@ -26,18 +26,6 @@
       </div>
     </section>
 
-    <section class="catalog">
-      <h2>Каталог продуктов</h2>
-      <div class="products">
-        <div class="product" v-for="product in products" :key="product.id">
-          <img :src="product.image" :alt="product.name">
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.description }}</p>
-          <p class="price">{{ product.price }} руб.</p>
-        </div>
-      </div>
-    </section>
-
     <section class="reviews">
       <h2>Отзывы клиентов</h2>
       <div class="reviews-list">
@@ -52,19 +40,10 @@
 </template>
 
 <script>
-import PurinaCat from '@/img/PurinaCat.jpg';
-import PurinaDog from '@/img/PurinaDog.jpg';
-import LapicoCat from '@/img/LapicoCat.jpg';
-
 export default {
   name: 'MainComponent',
   data() {
     return {
-      products: [
-        { id: 1, name: 'Purina Cat', description: 'PurinaOne кошачий корм 1,5кг.', price: 300, image: PurinaCat },
-        { id: 2, name: 'Purina Dog', description: 'PurinaOne собачий корм 10кг.', price: 3000, image: PurinaDog },
-        { id: 3, name: 'Lapico Cat', description: 'Lapico кошачий корм 400гр.', price: 110, image: LapicoCat },
-      ],
       reviews: [
         { id: 1, text: 'Отличный магазин! Быстрая доставка и качественные корма.', reviewer: 'Иван Иванов' },
         { id: 2, text: 'Мои кошки в восторге от нового корма!', reviewer: 'Анна Смирнова' },
@@ -115,34 +94,9 @@ h2, h3 {
   text-align: center;
 }
 
-.catalog {
-  margin-bottom: 20px;
-}
-
-.products {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.product {
-  background-color: #BBD49D;
-  color: #566E3A;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 10px;
-  max-width: 200px;
-  text-align: center;
-}
-
 .product img {
   max-width: 100%;
   border-radius: 10px;
-}
-
-.price {
-  font-weight: bold;
-  margin-top: 10px;
 }
 
 .reviews {
@@ -187,12 +141,10 @@ button:hover {
 @media (max-width: 768px) {
   .intro,
   .advantages-list,
-  .products,
   .reviews-list {
     flex-direction: column;
   }
 
-  .product,
   .review {
     max-width: 100%;
   }

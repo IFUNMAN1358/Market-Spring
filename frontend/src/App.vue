@@ -1,51 +1,102 @@
 <template>
   <div class="main-wrapper">
-    <Header />
+    <Header/>
     <div class="content">
-        <MainComponent v-if="isMain"/>
-        <LoginComponent v-if="isLogin" @closeLogin="closeAllAndAuth"/>
-        <RegisterComponent v-if="isRegistration" @closeRegistration="closeAllAndAuth"/>
-        <RoleComponent v-if="isRoles"/>
-        <ProfileComponent v-if="isProfile" @closeProfile="closeAllAndAuth"/>
+      <MainComponent v-if="isMain"/>
+
+      <CatalogComponent v-if="isCatalog"/>
+      <ShowProductComponent v-if="isShowProduct" @closeShowProduct="closeAllAndOpenCatalog"/>
+      <CreateProductComponent v-if="isCreateProduct" @closeCreateProduct="closeAllAndOpenProduct"/>
+
+      <LoginComponent v-if="isLogin" @closeLogin="closeAllAndOpenMain"/>
+      <RegistrationComponent v-if="isRegistration" @closeRegistration="closeAllAndOpenMain"/>
+      <ProfileComponent v-if="isProfile" @closeProfile="closeAllAndOpenMain"/>
+
+      <SettingsComponent v-if="isSettings" @closeSettings="closeAllAndOpenMain"/>
+      <ChangeNameAndSurnameComponent v-if="isChangeNameAndSurname" @closeChangeNameAndSurname="closeAllAndOpenProfile"/>
+      <ChangeEmailComponent v-if="isChangeEmail" @closeChangeEmail="closeAllAndOpenProfile"/>
+      <ChangePasswordComponent v-if="isChangePassword" @closeChangePassword="closeAllAndOpenProfile"/>
+      <DeleteAccountComponent v-if="isDeleteAccount" @closeDeleteAccount="closeAllAndOpenMain"/>
     </div>
-    <Footer />
+    <Footer/>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
+
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
-import RegisterComponent from "@/components/RegisterComponent.vue";
-import LoginComponent from "@/components/LoginComponent.vue";
-import RoleComponent from "@/components/RoleComponent.vue";
-import ProfileComponent from "@/components/ProfileComponent.vue";
+
 import MainComponent from "@/components/MainComponent.vue";
+
+import CatalogComponent from "@/components/products/CatalogComponent.vue";
+import ShowProductComponent from "@/components/products/ShowProductComponent.vue";
+import CreateProductComponent from "@/components/products/CreateProductComponent.vue";
+
+import LoginComponent from "@/components/LoginComponent.vue";
+import RegistrationComponent from "@/components/RegistrationComponent.vue";
+import ProfileComponent from "@/components/profile/ProfileComponent.vue";
+
+import SettingsComponent from "@/components/profile/SettingsComponent.vue";
+import ChangeNameAndSurnameComponent from "@/components/profile/settings/ChangeNameAndSurnameComponent.vue";
+import ChangeEmailComponent from "@/components/profile/settings/ChangeEmailComponent.vue";
+import ChangePasswordComponent from "@/components/profile/settings/ChangePasswordComponent.vue";
+import DeleteAccountComponent from "@/components/profile/settings/DeleteAccountComponent.vue";
 
 export default {
   name: 'App',
   components: {
-    MainComponent,
-    ProfileComponent,
-    RoleComponent,
-    LoginComponent,
-    RegisterComponent,
+    ShowProductComponent,
+    CreateProductComponent,
+    CatalogComponent,
     Header,
-    Footer
+    Footer,
+
+    MainComponent,
+
+    LoginComponent,
+    RegistrationComponent,
+    ProfileComponent,
+
+    SettingsComponent,
+    ChangeNameAndSurnameComponent,
+    ChangeEmailComponent,
+    ChangePasswordComponent,
+    DeleteAccountComponent
   },
   computed: {
-    ...mapState(['isMain', 'isRegistration', 'isLogin', 'isRoles', 'isProfile'])
+    ...mapState([
+      'isMain',
+      'isCatalog', 'isShowProduct', 'isCreateProduct',
+      'isLogin', 'isRegistration', 'isProfile',
+      'isSettings', 'isChangeNameAndSurname', 'isChangeEmail', 'isChangePassword', 'isDeleteAccount'
+    ])
   },
   methods: {
-    ...mapActions(['closeAll', 'checkAuth', 'showMain']),
-    closeAllAndAuth() {
+    ...mapActions(['closeAll', 'checkAuth', 'showMain', 'showProfile', 'showCatalog', 'showShowProduct']),
+    closeAllAndOpenMain() {
+      this.checkAuth();
       this.closeAll();
       this.showMain();
+    },
+    closeAllAndOpenProfile() {
       this.checkAuth();
+      this.closeAll();
+      this.showProfile();
+    },
+    closeAllAndOpenCatalog() {
+      this.checkAuth();
+      this.closeAll();
+      this.showCatalog();
+    },
+    closeAllAndOpenProduct() {
+      this.checkAuth();
+      this.closeAll();
+      this.showShowProduct();
     }
   },
   created() {
-    this.checkAuth();
     this.showMain();
   }
 };

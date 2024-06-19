@@ -22,14 +22,12 @@
         <label for="confirmPassword">Повторите пароль</label>
         <input type="password" id="confirmPassword" v-model="confirmPassword" required />
       </div>
-      <button type="submit">Зарегистрироваться</button>
+      <button type="submit" class="register-button">Зарегистрироваться</button>
     </form>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'RegisterComponent',
   data() {
@@ -39,7 +37,7 @@ export default {
       email: '',
       password: '',
       confirmPassword: ''
-    };
+    }
   },
   methods: {
     async register() {
@@ -48,7 +46,7 @@ export default {
         return;
       }
       try {
-        const response = await axios.post('/register', {
+        const response = await this.$axios.post('/register', {
           name: this.name,
           surname: this.surname,
           email: this.email,
@@ -58,7 +56,6 @@ export default {
         this.$emit('closeRegistration');
       } catch (error) {
         console.error('Ошибка при регистрации:', error.response ? error.response.data : error.message);
-        alert('Ошибка при регистрации');
       }
     }
   }
@@ -119,5 +116,9 @@ button {
 
 button:hover {
   background-color: #a7bf8f;
+}
+
+.register-button {
+  margin-top: 20px;
 }
 </style>

@@ -23,6 +23,8 @@ public class RoleInitializer {
     public void init() {
         addRoleIfNotExists(1, "ROLE_USER");
         addRoleIfNotExists(2, "ROLE_ADMIN");
+        addRoleIfNotExists(3, "ROLE_SUPPORT");
+        addRoleIfNotExists(4, "ROLE_PRODUCT_MANAGER");
     }
 
     private void addRoleIfNotExists(Integer id, String roleName) {

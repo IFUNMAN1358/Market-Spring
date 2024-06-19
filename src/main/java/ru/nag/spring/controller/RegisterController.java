@@ -23,7 +23,7 @@ public class RegisterController {
             user.setSurname(registerForm.getSurname());
             user.setEmail(registerForm.getEmail());
             user.setPassword(registerForm.getPassword());
-            userService.saveUser(user);
+            userService.registerUser(user);
             return ResponseEntity.ok("User has been registered");
         } catch (UserAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

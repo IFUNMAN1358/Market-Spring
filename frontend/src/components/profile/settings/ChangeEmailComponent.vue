@@ -1,49 +1,43 @@
 <template>
-  <div class="login-form">
-    <h2>ВХОД</h2>
-    <form @submit.prevent="login">
+  <div class="change-email-form">
+    <h2>ИЗМЕНИТЬ ПОЧТУ</h2>
+    <form @submit.prevent="changeEmail">
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="email">Новая почта</label>
         <input type="email" id="email" v-model="email" required />
       </div>
-      <div class="form-group">
-        <label for="password">Пароль</label>
-        <input type="password" id="password" v-model="password" required />
-      </div>
-      <button type="submit" class="login-button">Войти</button>
+      <button type="submit" class="change-button">Изменить</button>
     </form>
+    <button @click.prevent='showSettings' class="back-button">Назад</button>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions } from 'vuex';
 
 export default {
-  name: 'LoginComponent',
+  name: 'ChangeEmailComponent',
   data() {
     return {
-      email: '',
-      password: ''
+      email: ''
     }
   },
   methods: {
-    ...mapActions(['saveJwtTokens']),
-    async login() {
+    ...mapActions(['showSettings']),
+    async changeEmail() {
       try {
-        const response = await this.$axios.post('/login', {
+        const token = this.$cookies.get('accessToken');
+        const response = await this.$axios.patch('/user/change-email', {
           email: this.email,
-          password: this.password
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
-        console.log('Successful login');
-
-        await this.saveJwtTokens({
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken
-        });
-        this.$emit('closeLogin');
-
+        console.log(response);
+        this.$emit('closeChangeEmail');
       } catch (error) {
-        console.error('Ошибка при входе:', error.response ? error.response.data : error.message);
+        console.error('Ошибка при изменении:', error.response ? error.response.data : error.message);
       }
     }
   }
@@ -51,7 +45,7 @@ export default {
 </script>
 
 <style scoped>
-.login-form {
+.change-email-form {
   background-color: #566E3A;
   padding: 20px;
   border-radius: 20px;
@@ -61,7 +55,7 @@ export default {
   box-sizing: border-box;
 }
 
-.login-form h2 {
+.change-email-form h2 {
   color: #BBD49D;
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
@@ -106,7 +100,17 @@ button:hover {
   background-color: #a7bf8f;
 }
 
-.login-button {
+.change-button {
+  margin-top: 10px;
+}
+
+.back-button {
   margin-top: 20px;
+  background-color: #BBD49D;
+  color: #566E3A;
+}
+
+.back-button:hover {
+  background-color: #a7bf8f;
 }
 </style>
