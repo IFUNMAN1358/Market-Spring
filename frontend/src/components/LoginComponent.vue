@@ -34,13 +34,13 @@ export default {
           email: this.email,
           password: this.password
         });
-        console.log('Successful login');
 
         await this.saveJwtTokens({
           accessToken: response.data.accessToken,
           refreshToken: response.data.refreshToken
         });
-        this.$emit('closeLogin');
+
+        this.$router.push({ name: 'ProfileComponent' });
 
       } catch (error) {
         console.error('Ошибка при входе:', error.response ? error.response.data : error.message);

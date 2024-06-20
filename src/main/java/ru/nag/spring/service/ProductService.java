@@ -57,4 +57,8 @@ public class ProductService {
         return query.getResultList();
     }
 
+    public Product getProductById(Integer id) {
+        return productRepository.getProductById(id);
+    }
+
 }

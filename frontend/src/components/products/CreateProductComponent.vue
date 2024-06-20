@@ -76,8 +76,7 @@ export default {
         productIngredients: '',
         countryOfOrigin: '',
         expDateMonths: '',
-        price: '',
-        imageUrl: ''
+        price: ''
       },
       imageFile: null
     }
@@ -94,8 +93,10 @@ export default {
         }
         formData.append('image', this.imageFile);
 
-        const response = await this.$axios.post('/products', formData, {
+        const token = this.$cookies.get('accessToken');
+        const response = await this.$axios.post('/catalog', formData, {
           headers: {
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
           }
         });

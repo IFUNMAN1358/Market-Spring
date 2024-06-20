@@ -8,13 +8,13 @@
       </div>
       <button type="submit" class="change-button">Изменить</button>
     </form>
-    <button @click.prevent='showSettings' class="back-button">Назад</button>
+    <router-link :to="{ name: 'SettingsComponent' }">
+      <button class="back-button">Назад</button>
+    </router-link>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 export default {
   name: 'ChangeEmailComponent',
   data() {
@@ -23,7 +23,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['showSettings']),
     async changeEmail() {
       try {
         const token = this.$cookies.get('accessToken');
@@ -35,7 +34,7 @@ export default {
           }
         });
         console.log(response);
-        this.$emit('closeChangeEmail');
+        this.$router.push({ name: 'ProfileComponent' });
       } catch (error) {
         console.error('Ошибка при изменении:', error.response ? error.response.data : error.message);
       }

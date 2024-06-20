@@ -1,6 +1,8 @@
 <template>
   <div class="main-container">
-    <button v-if="isProductManager" @click="showCreateProduct" class="add-product-button">Добавить продукт</button>
+    <router-link v-if="isProductManager" :to="{ name: 'CreateProductComponent' }">
+      <button class="add-product-button">Добавить продукт</button>
+    </router-link>
     <div class="intro">
       <div class="intro-text">
         <input v-model="searchQuery" @input="filterProducts" placeholder="Поиск..." class="search-input" />
@@ -46,7 +48,7 @@
       <div class="products-wrapper">
         <div class="products">
           <div v-for="product in paginatedProducts" :key="product.id" class="product" @click="viewProduct(product.id)">
-            <img :src="PurinaCat" :alt="product.productName" class="product-image" />
+            <img :src="`${axiosUrl}${product.imageUrl}`" :alt="product.productName" class="product-image" />
             <div class="product-info">
               <h3 class="product-name">{{ product.productName }}</h3>
               <p class="product-weight">Вес: {{ product.productWeight }} гр.</p>
@@ -64,19 +66,19 @@
 </template>
 
 <script>
-import axios from 'axios';
 import debounce from 'lodash/debounce';
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 
-import PurinaCat from '@/img/PurinaCat.jpg';
 import CartIcon from '@/img/CartIcon.png';
 
 export default {
   name: 'CatalogComponent',
+
+
   data() {
     return {
+      axiosUrl: this.$axios.defaults.baseURL,
       CartIcon: CartIcon,
-      PurinaCat: PurinaCat,
       products: new Set(),
       searchQuery: '',
       filters: {
@@ -90,6 +92,7 @@ export default {
       scrollPosition: 0,
     };
   },
+
   computed: {
     ...mapState(["isProductManager"]),
     filteredProducts() {
@@ -107,11 +110,20 @@ export default {
       return this.filteredProducts.slice(0, this.currentPage * this.productsPerPage);
     },
   },
+
+
   methods: {
-    ...mapActions(['showCreateProduct']),
+    viewProduct(productId) {
+      this.$router.push({ name: 'ShowProductComponent', params: { id: productId } });
+    },
+    addToCart(productId) {
+      this.addToCart({ id: productId });
+    },
+
+
     async getProducts(offset = 0, limit = 20, search = '', productType = '', brand = '', ageCategory = '', animalType = '') {
       try {
-        const response = await axios.get('/catalog', {
+        const response = await this.$axios.get('/catalog', {
           params: { offset, limit, search, productType, brand, ageCategory, animalType }
         });
 
@@ -130,7 +142,7 @@ export default {
     },
     async fetchFilteredProducts() {
       try {
-        const response = await axios.get('/catalog', {
+        const response = await this.$axios.get('/catalog', {
           params: {
             offset: 0,
             limit: this.productsPerPage * this.currentPage,
@@ -146,13 +158,6 @@ export default {
         console.error('Ошибка при получении товаров:', error);
         return [];
       }
-    },
-    addToCart(product) {
-      console.log(`Товар добавлен в корзину: ${product.productName}`);
-    },
-    viewProduct(productId) {
-      console.log(`Просмотр товара с ID: ${productId}`);
-      this.$router.push({ name: 'ProductDetails', params: { id: productId } });
     },
     async loadMoreProducts() {
       this.currentPage++;
@@ -285,7 +290,7 @@ export default {
   color: #566e3a;
   border-radius: 10px;
   padding: 10px;
-  margin: 10px 2.5px;
+  margin: 10px 3px;
   width: calc(25% - 5px);
   text-align: center;
   cursor: pointer;

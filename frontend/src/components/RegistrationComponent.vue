@@ -53,7 +53,9 @@ export default {
           password: this.password
         });
         console.log(response.data);
-        this.$emit('closeRegistration');
+
+        this.$router.push({ name: 'LoginComponent' });
+
       } catch (error) {
         console.error('Ошибка при регистрации:', error.response ? error.response.data : error.message);
       }

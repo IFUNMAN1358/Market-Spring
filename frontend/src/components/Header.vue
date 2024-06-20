@@ -1,36 +1,36 @@
 <template>
   <header>
     <nav class="navbar navbar-expand-lg navbar-custom">
-      <a class="navbar-brand" href="" @click.prevent="showMain">
+      <router-link :to="{ name: 'MainComponent' }" class="navbar-brand">
         <img src="@/img/PetFoodLogo.png" alt="Logo" class="header-logo">
-      </a>
+      </router-link>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         Меню
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
-            <a class="nav-link" href="" @click.prevent="showMain">ГЛАВНАЯ</a>
+            <router-link :to="{ name: 'MainComponent' }" class="nav-link">ГЛАВНАЯ</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="" @click.prevent="showCatalog">КАТАЛОГ</a>
+            <router-link :to="{ name: 'CatalogComponent' }" class="nav-link">КАТАЛОГ</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="">ПОДДЕРЖКА</a>
+            <router-link :to="{ name: 'CreateSupportComponent' }" class="nav-link">ПОДДЕРЖКА</router-link>
           </li>
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item" v-if="!isAuthenticated">
-            <a class="nav-link large-nav-link" href="" @click.prevent="showLogin">ВХОД</a>
+            <router-link :to="{ name: 'LoginComponent' }" class="nav-link large-nav-link">ВХОД</router-link>
           </li>
           <li class="nav-item" v-if="!isAuthenticated">
-            <a class="nav-link large-nav-link" href="" @click.prevent="showRegistration">РЕГИСТРАЦИЯ</a>
+            <router-link :to="{ name: 'RegistrationComponent' }" class="nav-link large-nav-link">РЕГИСТРАЦИЯ</router-link>
           </li>
           <li class="nav-item" v-if="isAuthenticated">
-            <a class="nav-link large-nav-link" href="">КОРЗИНА</a>
+            <router-link :to="{ name: 'CartComponent' }" class="nav-link large-nav-link">КОРЗИНА</router-link>
           </li>
           <li class="nav-item" v-if="isAuthenticated">
-            <a class="nav-link large-nav-link" href="" @click.prevent="showProfile">ПРОФИЛЬ</a>
+            <router-link :to="{ name: 'ProfileComponent' }" class="nav-link large-nav-link">ПРОФИЛЬ</router-link>
           </li>
         </ul>
       </div>
@@ -39,15 +39,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   name: 'HeaderComponent',
   computed: {
     ...mapState(['isAuthenticated'])
-  },
-  methods: {
-    ...mapActions(['showMain', 'showRegistration', 'showLogin', 'showProfile', 'showCatalog'])
   }
 };
 </script>

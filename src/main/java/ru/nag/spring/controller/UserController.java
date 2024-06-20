@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping("/user")
     public ResponseEntity<UserResponse> getUser() throws UserNotFoundException {
-        final JwtAuthentication authInfo = authService.getAuthInfo();
+        JwtAuthentication authInfo = authService.getAuthInfo();
         User user = userService.getUserById(UUID.fromString(authInfo.getId()));
          UserResponse userResponse = new UserResponse(
             user.getId().toString(),
@@ -86,7 +86,7 @@ public class UserController {
 
     @DeleteMapping("/user")
     public ResponseEntity<String> deleteUser() throws UserNotFoundException {
-        final JwtAuthentication authInfo = authService.getAuthInfo();
+        JwtAuthentication authInfo = authService.getAuthInfo();
         userService.deleteUserById(UUID.fromString(authInfo.getId()));
         return ResponseEntity.ok("User deleted: " + authInfo.getId());
     }

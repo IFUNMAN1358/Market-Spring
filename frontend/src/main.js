@@ -3,6 +3,7 @@ import App from './App.vue';
 import axios from "@/axios";
 import store from '@/store/index.js';
 import VueCookies from 'vue-cookies';
+import router from '@/router.js';
 
 import 'jquery/src/jquery.js'
 import '@popperjs/core/dist/umd/popper';
@@ -15,6 +16,7 @@ const app = createApp(App);
 app.config.globalProperties.$axios = axios;
 
 store.dispatch('checkAuth').then(() => {
+  app.use(router)
   app.use(VueCookies);
   app.use(store);
   app.mount('#app');

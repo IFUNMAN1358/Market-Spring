@@ -12,13 +12,13 @@
       </div>
       <button type="submit" class="change-button">Изменить</button>
     </form>
-    <button @click.prevent='showSettings' class="back-button">Назад</button>
+    <router-link :to="{ name: 'SettingsComponent' }">
+      <button class="back-button">Назад</button>
+    </router-link>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 export default {
   name: 'ChangePasswordComponent',
   data() {
@@ -28,7 +28,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['showSettings']),
     async changePassword() {
       if (this.password !== this.confirmPassword) {
         alert('Пароли не совпадают');
@@ -44,7 +43,7 @@ export default {
           }
         });
         console.log(response);
-        this.$emit('closeChangePassword');
+        this.$router.push({ name: 'ProfileComponent' });
       } catch (error) {
         console.error('Ошибка при изменении пароля:', error.response ? error.response.data : error.message);
       }

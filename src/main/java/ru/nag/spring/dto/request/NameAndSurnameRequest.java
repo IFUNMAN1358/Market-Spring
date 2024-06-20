@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NameAndSurnameRequest {
-    String name;
-    String surname;
+    private String name;
+    private String surname;
 }

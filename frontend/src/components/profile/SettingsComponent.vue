@@ -2,23 +2,28 @@
   <div class="settings-container">
     <h2>Настройки</h2>
     <div class="profile-actions">
-      <button @click.prevent="showChangeNameAndSurname">Смена имени и фамилии</button>
-      <button @click.prevent="showChangeEmail">Смена почты</button>
-      <button @click.prevent="showChangePassword">Смена пароля</button>
-      <button @click.prevent="showDeleteAccount">Удалить аккаунт</button>
-      <button @click.prevent="showProfile" class="back-button">Назад</button>
+      <router-link :to="{ name: 'ChangeNameAndSurnameComponent' }">
+        <button>Смена имени и фамилии</button>
+      </router-link>
+      <router-link :to="{ name: 'ChangeEmailComponent' }">
+        <button>Смена почты</button>
+      </router-link>
+      <router-link :to="{ name: 'ChangePasswordComponent' }">
+        <button>Смена пароля</button>
+      </router-link>
+      <router-link :to="{ name: 'DeleteAccountComponent' }">
+        <button>Удалить аккаунт</button>
+      </router-link>
+      <router-link :to="{ name: 'ProfileComponent' }">
+        <button class="back-button">Назад</button>
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 export default {
-  name: 'SettingsComponent',
-  methods: {
-    ...mapActions(['showProfile', 'showChangeNameAndSurname', 'showChangeEmail', 'showChangePassword', 'showDeleteAccount']),
-  }
+  name: 'SettingsComponent'
 }
 </script>
 

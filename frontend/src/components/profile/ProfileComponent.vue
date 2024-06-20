@@ -7,19 +7,13 @@
       <p><strong>Email:</strong> {{ user.email }}</p>
     </div>
     <div class="profile-actions">
-      <button @click="fetchOrderHistory">История заказов</button>
-      <button @click.prevent="showSettings">Настройки</button>
+      <router-link :to="{ name: 'OrdersComponent' }">
+        <button>История заказов</button>
+      </router-link>
+      <router-link :to="{ name: 'SettingsComponent'}">
+        <button>Настройки</button>
+      </router-link>
       <button @click="logout">Выйти из аккаунта</button>
-    </div>
-    <div v-if="orders.length" class="order-history">
-      <h3>История заказов</h3>
-      <ul>
-        <li v-for="order in orders" :key="order.id">
-          <p><strong>Номер заказа:</strong> {{ order.id }}</p>
-          <p><strong>Дата:</strong> {{ order.date }}</p>
-          <p><strong>Сумма:</strong> {{ order.amount }} руб.</p>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
@@ -31,12 +25,11 @@ export default {
   name: 'ProfileComponent',
   data() {
     return {
-      user: null,
-      orders: []
+      user: null
     };
   },
   methods: {
-    ...mapActions(['removeTokens', 'showSettings']),
+    ...mapActions(['removeTokens']),
     async fetchUserData() {
       try {
         const token = this.$cookies.get('accessToken');
@@ -50,18 +43,10 @@ export default {
         console.error('Ошибка при получении данных пользователя:', error.response ? error.response.data : error.message);
       }
     },
-    // async fetchOrderHistory() {
-    //   try {
-    //     const response = await axios.get('/user/orders');
-    //     this.orders = response.data.orders;
-    //   } catch (error) {
-    //     console.error('Ошибка при получении истории заказов:', error.response ? error.response.data : error.message);
-    //   }
-    // },
     async logout() {
       try {
         await this.removeTokens();
-        this.$emit('closeProfile');
+        this.$router.push({ name: 'MainComponent' })
       } catch (error) {
         console.error('Ошибка при выходе из аккаунта:', error.response ? error.response.data : error.message);
       }
@@ -95,11 +80,6 @@ export default {
 .profile-details p,
 .order-history li {
   margin-bottom: 10px;
-}
-
-.order-history {
-  list-style: none;
-  padding: 0;
 }
 
 .profile-actions {

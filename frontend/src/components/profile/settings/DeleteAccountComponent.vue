@@ -3,7 +3,9 @@
     <h2>Удаление аккаунта</h2>
     <p>Вы уверены, что хотите удалить свой аккаунт? Это действие необратимо и приведет к удалению всех ваших данных и истории покупок.</p>
     <button @click="deleteUser" class="delete-button">Удалить</button>
-    <button @click.prevent='showSettings' class="back-button">Назад</button>
+    <router-link :to="{ name: 'SettingsComponent' }">
+      <button class="back-button">Назад</button>
+    </router-link>
   </div>
 </template>
 
@@ -13,7 +15,7 @@ import { mapActions } from 'vuex';
 export default {
   name: 'DeleteAccountComponent',
   methods: {
-    ...mapActions(['removeTokens', 'showSettings']),
+    ...mapActions(['removeTokens']),
     async deleteUser() {
       try {
         const token = this.$cookies.get('accessToken');
@@ -24,7 +26,7 @@ export default {
         });
         console.log(response);
         await this.removeTokens();
-        this.$emit('closeDeleteAccount');
+        this.$router.push({ name: 'MainComponent' });
       } catch (error) {
         console.error('Ошибка при удалении:', error.response ? error.response.data : error.message);
       }
