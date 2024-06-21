@@ -9,6 +9,8 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nag.spring.domain.Product;
+import ru.nag.spring.dto.request.ProductRequest;
+import ru.nag.spring.exception.ProductException.ProductNotFoundException;
 import ru.nag.spring.repository.ProductRepository;
 
 import java.util.ArrayList;
@@ -23,6 +25,12 @@ public class ProductService {
 
     public void save(Product product) {
         productRepository.save(product);
+    }
+
+    public Product getProductById(Integer id) throws ProductNotFoundException {
+        return productRepository.findProductById(id).orElseThrow(
+                () -> new ProductNotFoundException("Product not found")
+        );
     }
 
     public List<Product> getProducts(Integer offset, Integer limit, String search, String productType, String brand, String ageCategory, String animalType) {
@@ -57,8 +65,19 @@ public class ProductService {
         return query.getResultList();
     }
 
-    public Product getProductById(Integer id) {
-        return productRepository.getProductById(id);
+    public void updateProductFromForm(Product product, ProductRequest productForm) {
+        product.setProductName(productForm.getProductName());
+        product.setProductType(productForm.getProductType());
+        product.setBrand(productForm.getBrand());
+        product.setAgeCategory(productForm.getAgeCategory());
+        product.setAnimalType(productForm.getAnimalType());
+        product.setProductWeight(productForm.getProductWeight());
+        product.setStockQuantity(productForm.getStockQuantity());
+        product.setDescription(productForm.getDescription());
+        product.setProductIngredients(productForm.getProductIngredients());
+        product.setCountryOfOrigin(productForm.getCountryOfOrigin());
+        product.setExpDateMonths(productForm.getExpDateMonths());
+        product.setPrice(productForm.getPrice());
     }
 
 }

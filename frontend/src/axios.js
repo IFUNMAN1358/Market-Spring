@@ -4,7 +4,9 @@ import store from './store';
 axios.defaults.baseURL = 'http://localhost:8000'
 
 axios.interceptors.response.use(
-  response => response,
+  async response => {
+    return response;
+  },
   async error => {
     const originalRequest = error.config;
 
@@ -15,7 +17,7 @@ axios.interceptors.response.use(
         await store.dispatch('refreshToken');
         return axios(originalRequest);
       } catch (e) {
-        console.log('ne ok')
+        console.log('Ошибка обновления токена:', e);
         await store.dispatch('removeTokens');
         return Promise.reject(e);
       }

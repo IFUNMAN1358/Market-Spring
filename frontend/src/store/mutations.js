@@ -4,14 +4,21 @@ export default {
     state.isAuthenticated = value;
     localStorage.setItem('isAuthenticated', value);
   },
-  setProductManagerRole(state, value) {
-    state.isProductManager = value;
+
+  setUserRole(state, hasRole) {
+    if (hasRole) state.roles.push('ROLE_USER');
   },
-  setSupportRole(state, value) {
-    state.isSupport = value;
+  setProductManagerRole(state, hasRole) {
+    if (hasRole) state.roles.push('ROLE_PRODUCT_MANAGER');
   },
-  setAdminRole(state, value) {
-    state.isAdmin = value;
+  setSupportRole(state, hasRole) {
+    if (hasRole) state.roles.push('ROLE_SUPPORT');
+  },
+  setAdminRole(state, hasRole) {
+    if (hasRole) state.roles.push('ROLE_ADMIN');
   },
 
+  clearRoles(state) {
+    state.roles = [];
+  }
 };

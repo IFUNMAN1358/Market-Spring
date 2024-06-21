@@ -1,4 +1,4 @@
-package ru.nag.spring.exception;
+package ru.nag.spring.exception.UserException;
 
 public class UserAlreadyExistsException extends Exception{
     public UserAlreadyExistsException(String message) {

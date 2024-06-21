@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.nag.spring.domain.User;
 import ru.nag.spring.dto.request.RegisterForm;
-import ru.nag.spring.exception.UserAlreadyExistsException;
+import ru.nag.spring.exception.UserException.UserAlreadyExistsException;
 import ru.nag.spring.service.UserService;
 
 

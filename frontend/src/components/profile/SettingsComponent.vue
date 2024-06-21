@@ -2,21 +2,11 @@
   <div class="settings-container">
     <h2>Настройки</h2>
     <div class="profile-actions">
-      <router-link :to="{ name: 'ChangeNameAndSurnameComponent' }">
-        <button>Смена имени и фамилии</button>
-      </router-link>
-      <router-link :to="{ name: 'ChangeEmailComponent' }">
-        <button>Смена почты</button>
-      </router-link>
-      <router-link :to="{ name: 'ChangePasswordComponent' }">
-        <button>Смена пароля</button>
-      </router-link>
-      <router-link :to="{ name: 'DeleteAccountComponent' }">
-        <button>Удалить аккаунт</button>
-      </router-link>
-      <router-link :to="{ name: 'ProfileComponent' }">
-        <button class="back-button">Назад</button>
-      </router-link>
+        <button @click="$router.push({name: 'ChangeNameAndSurnameComponent'})" class="action-button">Смена имени и фамилии</button>
+        <button @click="$router.push({name: 'ChangeEmailComponent'})" class="action-button">Смена почты</button>
+        <button @click="$router.push({name: 'ChangePasswordComponent'})" class="action-button">Смена пароля</button>
+        <button @click="$router.push({name: 'DeleteAccountComponent'})" class="action-button">Удалить аккаунт</button>
+        <button @click="$router.push({name: 'ProfileComponent'})" class="action-button">Назад</button>
     </div>
   </div>
 </template>
@@ -40,12 +30,12 @@ export default {
   font-family: 'Roboto', sans-serif;
 }
 
-.profile-container h2 {
+.settings-container h2 {
   text-align: center;
   font-weight: bold;
 }
 
-.profile-details p,
+.settings-container p,
 .order-history li {
   margin-bottom: 10px;
 }
@@ -56,9 +46,8 @@ export default {
   align-items: center;
 }
 
-.profile-actions button {
+.action-button {
   width: 100%;
-  max-width: 200px;
   padding: 10px;
   background-color: #BBD49D;
   color: #566E3A;
@@ -69,24 +58,7 @@ export default {
   margin: 5px 0;
 }
 
-.profile-actions button:hover {
-  background-color: #a7bf8f;
-}
-
-.profile-actions .back-button {
-  margin-top: 20px;
-  width: 100%;
-  max-width: 200px;
-  padding: 10px;
-  background-color: #BBD49D;
-  color: #566E3A;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-family: 'Roboto', sans-serif;
-}
-
-.profile-actions .back-button:hover {
+.action-button:hover {
   background-color: #a7bf8f;
 }
 </style>

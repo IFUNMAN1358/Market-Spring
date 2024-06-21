@@ -6,8 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.nag.spring.domain.Role;
 import ru.nag.spring.domain.User;
-import ru.nag.spring.exception.UserAlreadyExistsException;
-import ru.nag.spring.exception.UserNotFoundException;
+import ru.nag.spring.exception.UserException.UserAlreadyExistsException;
+import ru.nag.spring.exception.UserException.UserNotFoundException;
 import ru.nag.spring.repository.RoleRepository;
 import ru.nag.spring.repository.UserRepository;
 

@@ -4,7 +4,7 @@ import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.nag.spring.exception.UserNotFoundException;
+import ru.nag.spring.exception.UserException.UserNotFoundException;
 import ru.nag.spring.service.AuthService;
 import ru.nag.spring.dto.request.JwtRequest;
 import ru.nag.spring.dto.response.JwtResponse;

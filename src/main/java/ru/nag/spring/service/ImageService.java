@@ -12,13 +12,13 @@ import java.util.UUID;
 @Service
 public class ImageService {
 
+    private final String uploadDir = "src/main/resources/product_img/";
+
     public String saveImage(MultipartFile imageFile) {
         try {
             if (imageFile.isEmpty()) {
                 throw new IOException("File is empty");
             }
-
-            String uploadDir = "src/main/resources/product_img/";
 
             String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, fileName);
@@ -31,4 +31,16 @@ public class ImageService {
         }
     }
 
+    public void deleteProductImageUrl(String imageUrl) {
+        try {
+            String fileName = Paths.get(imageUrl).getFileName().toString();
+            Path filePath = Paths.get(uploadDir, fileName);
+
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete image file", e);
+        }
+    }
 }

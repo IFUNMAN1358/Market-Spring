@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import store from '@/store/index';
 import MainComponent from "@/components/MainComponent.vue";
 import ShowProductComponent from '@/components/products/ShowProductComponent.vue';
 import LoginComponent from "@/components/LoginComponent.vue";
@@ -16,36 +17,48 @@ import CartComponent from "@/components/profile/CartComponent.vue";
 import OrdersComponent from "@/components/profile/OrdersComponent.vue";
 import ShowSupportComponent from "@/components/support/ShowSupportComponent.vue";
 import CreateSupportComponent from "@/components/support/CreateSupportComponent.vue";
+import AccessDeniedComponent from "@/components/AccessDeniedComponent.vue";
 
 const routes = [
-  { path: '/', name: 'MainComponent', component: MainComponent },
+  {path: '/', name: 'MainComponent', component: MainComponent},
+  {path: '/access-denied', name: 'AccessDeniedComponent', component: AccessDeniedComponent},
 
-  { path: '/login', name: 'LoginComponent', component: LoginComponent },
-  { path: '/registration', name: 'RegistrationComponent', component: RegistrationComponent },
+  {path: '/login', name: 'LoginComponent', component: LoginComponent},
+  {path: '/registration', name: 'RegistrationComponent', component: RegistrationComponent},
 
-  { path: '/catalog', name: 'CatalogComponent', component: CatalogComponent },
-  { path: '/catalog/create', name: 'CreateProductComponent', component: CreateProductComponent },
-  { path: '/catalog/:id', name: 'ShowProductComponent', component: ShowProductComponent, props: true },
-  { path: '/catalog/:id/edit', name: 'UpdateProductComponent', component: UpdateProductComponent, props: true },
+  {path: '/catalog', name: 'CatalogComponent', component: CatalogComponent},
+  {path: '/catalog/create', name: 'CreateProductComponent', component: CreateProductComponent, meta: {requiresRole: 'ROLE_PRODUCT_MANAGER'}},
+  {path: '/catalog/:id', name: 'ShowProductComponent', component: ShowProductComponent, props: true},
+  {path: '/catalog/:id/edit', name: 'UpdateProductComponent', component: UpdateProductComponent, props: true, meta: {requiresRole: 'ROLE_PRODUCT_MANAGER'}},
 
-  { path: '/support/create', name: 'CreateSupportComponent', component: CreateSupportComponent },
-  { path: '/support/show', name: 'ShowSupportComponent', component: ShowSupportComponent },
+  {path: '/support/create', name: 'CreateSupportComponent', component: CreateSupportComponent},
+  {path: '/support/show', name: 'ShowSupportComponent', component: ShowSupportComponent, meta: {requiresRole: 'ROLE_SUPPORT'}},
 
-  { path: '/profile', name: 'ProfileComponent', component: ProfileComponent },
+  {path: '/profile', name: 'ProfileComponent', component: ProfileComponent, meta: {requiresRole: 'ROLE_USER'}},
 
-  { path: '/profile/cart', name: 'CartComponent', component: CartComponent },
-  { path: '/profile/orders', name: 'OrdersComponent', component: OrdersComponent },
+  {path: '/profile/cart', name: 'CartComponent', component: CartComponent, meta: {requiresRole: 'ROLE_USER'}},
+  {path: '/profile/orders', name: 'OrdersComponent', component: OrdersComponent, meta: {requiresRole: 'ROLE_USER'}},
 
-  { path: '/profile/settings', name: 'SettingsComponent', component: SettingsComponent },
-  { path: '/profile/settings/change-name-and-surname', name: 'ChangeNameAndSurnameComponent', component: ChangeNameAndSurnameComponent },
-  { path: '/profile/settings/change-email', name: 'ChangeEmailComponent', component: ChangeEmailComponent },
-  { path: '/profile/settings/change-password', name: 'ChangePasswordComponent', component: ChangePasswordComponent },
-  { path: '/profile/settings/delete-account', name: 'DeleteAccountComponent', component: DeleteAccountComponent }
+  {path: '/profile/settings', name: 'SettingsComponent', component: SettingsComponent, meta: {requiresRole: 'ROLE_USER'}},
+  {path: '/profile/settings/change-name-and-surname', name: 'ChangeNameAndSurnameComponent', component: ChangeNameAndSurnameComponent, meta: {requiresRole: 'ROLE_USER'}},
+  {path: '/profile/settings/change-email', name: 'ChangeEmailComponent', component: ChangeEmailComponent, meta: {requiresRole: 'ROLE_USER'}},
+  {path: '/profile/settings/change-password', name: 'ChangePasswordComponent', component: ChangePasswordComponent, meta: {requiresRole: 'ROLE_USER'}},
+  {path: '/profile/settings/delete-account', name: 'DeleteAccountComponent', component: DeleteAccountComponent, meta: {requiresRole: 'ROLE_USER'}}
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+});
+
+router.beforeEach(async (to, from, next) => {
+  await store.dispatch("checkAuth");
+  const requiresRole = to.meta.requiresRole;
+  if (requiresRole && !store.getters.hasRole(requiresRole)) {
+    next({ name: 'AccessDeniedComponent' });
+  } else {
+    next();
+  }
 });
 
 export default router;

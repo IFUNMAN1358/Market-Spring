@@ -1,6 +1,4 @@
 export default {
-  isAuthenticated: localStorage.getItem('isAuthenticated') === 'true' || false,
-  isProductManager: false,
-  isSupport: false,
-  isAdmin: false
+  roles: [],
+  isAuthenticated: localStorage.getItem('isAuthenticated') === 'true' || false
 };

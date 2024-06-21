@@ -8,7 +8,7 @@ import ru.nag.spring.dto.request.EmailRequest;
 import ru.nag.spring.dto.request.NameAndSurnameRequest;
 import ru.nag.spring.dto.request.PasswordRequest;
 import ru.nag.spring.dto.response.UserResponse;
-import ru.nag.spring.exception.UserNotFoundException;
+import ru.nag.spring.exception.UserException.UserNotFoundException;
 import ru.nag.spring.jwt.JwtAuthentication;
 import ru.nag.spring.service.AuthService;
 import ru.nag.spring.service.UserService;

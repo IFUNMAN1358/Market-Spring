@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.nag.spring.domain.Product;
 import ru.nag.spring.dto.request.ProductRequest;
+import ru.nag.spring.exception.ProductException.ProductNotFoundException;
 import ru.nag.spring.jwt.JwtAuthentication;
 import ru.nag.spring.service.AuthService;
 import ru.nag.spring.service.ImageService;
@@ -36,7 +37,7 @@ public class ProductController {
     }
 
     @GetMapping("/catalog/{id}") // ALL
-    public ResponseEntity<Product> showProduct(@PathVariable Integer id) {
+    public ResponseEntity<Product> showProduct(@PathVariable Integer id) throws ProductNotFoundException {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(product);
     }
@@ -51,29 +52,30 @@ public class ProductController {
         String imageUrl = imageService.saveImage(productForm.getImage());
 
         Product product = new Product();
-        product.setProductName(productForm.getProductName());
-        product.setProductType(productForm.getProductType());
-        product.setBrand(productForm.getBrand());
-        product.setAgeCategory(productForm.getAgeCategory());
-        product.setAnimalType(productForm.getAnimalType());
-        product.setProductWeight(productForm.getProductWeight());
-        product.setStockQuantity(productForm.getStockQuantity());
-        product.setDescription(productForm.getDescription());
-        product.setProductIngredients(productForm.getProductIngredients());
-        product.setCountryOfOrigin(productForm.getCountryOfOrigin());
-        product.setExpDateMonths(productForm.getExpDateMonths());
-        product.setPrice(productForm.getPrice());
         product.setImageUrl(imageUrl);
 
+        productService.updateProductFromForm(product, productForm);
         productService.save(product);
 
         return ResponseEntity.ok("Product created");
     }
 
-    @PatchMapping("/catalog/{id}") // PRODUCT_MANAGER
-    public ResponseEntity<String> updateProduct(@PathVariable String id) {
+    @PatchMapping("/catalog/{id}")
+    public ResponseEntity<String> updateProduct(@PathVariable Integer id,
+                                                @ModelAttribute ProductRequest productForm) throws ProductNotFoundException {
         JwtAuthentication authInfo = authService.getAuthInfo();
-        return ResponseEntity.ok("ok");
+        Product product = productService.getProductById(id);
+
+        String oldImageUrl = product.getImageUrl();
+        imageService.deleteProductImageUrl(oldImageUrl);
+
+        String imageUrl = imageService.saveImage(productForm.getImage());
+        product.setImageUrl(imageUrl);
+
+        productService.updateProductFromForm(product, productForm);
+        productService.save(product);
+
+        return ResponseEntity.ok("Product updated");
     }
 
     @DeleteMapping("/catalog/{id}") // PRODUCT_MANAGER

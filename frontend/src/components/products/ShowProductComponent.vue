@@ -14,28 +14,20 @@
       <p><strong>Описание:</strong> {{ product.description }}</p>
       <p><strong>Ингредиенты:</strong> {{ product.productIngredients }}</p>
       <p><strong>Страна происхождения:</strong> {{ product.countryOfOrigin }}</p>
-      <p><strong>Срок годности:</strong> {{ product.expDateMonths }} месяцев</p>
-      <p><strong>Цена:</strong> {{ product.price }} рублей</p>
+      <p><strong>Срок годности:</strong> {{ product.expDateMonths }} мес.</p>
+      <p><strong>Цена:</strong> {{ product.price }} руб.</p>
     </div>
     <div class="product-actions">
-
       <button @click="addToCart(product)" class="action-button">Добавить в корзину</button>
-
-      <router-link :to="{name: 'CatalogComponent'}">
-        <button class="action-button">Назад к каталогу</button>
-      </router-link>
-
-      <router-link v-if="isProductManager" :to="{name: 'UpdateProductComponent', params: { id: product.id }}">
-        <button class="action-button">Редактировать</button>
-      </router-link>
-
-      <button v-if="isProductManager" @click="deleteProduct(product)" class="action-button">Удалить</button>
+      <button @click="$router.push({name: 'CatalogComponent'})" class="action-button">Назад к каталогу</button>
+      <button v-if="hasRole('ROLE_PRODUCT_MANAGER')" @click="$router.push({name: 'UpdateProductComponent', params: { id: product.id }})" class="action-button">Редактировать</button>
+      <button v-if="hasRole('ROLE_PRODUCT_MANAGER')" @click="deleteProduct(product)" class="action-button">Удалить</button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ShowProductComponent',
@@ -46,7 +38,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isProductManager']),
+    ...mapGetters(['hasRole'])
   },
   methods: {
     async fetchProduct() {
@@ -63,7 +55,7 @@ export default {
     async deleteProduct(product) {
       try {
         await this.$axios.delete(`/catalog/${product.id}`);
-        this.goBackToCatalog();
+        this.$router.push({ name: 'CatalogComponent' });
       } catch (error) {
         console.error('Ошибка при удалении товара:', error);
       }
@@ -92,7 +84,7 @@ export default {
 }
 
 .product-image {
-  max-width: 100%;
+  max-width: 80%;
   border-radius: 10px;
   margin: 10px 0;
 }
@@ -113,8 +105,8 @@ export default {
 
 .action-button {
   padding: 10px 20px;
-  background-color: #4d5c40;
-  color: #bbd49d;
+  background-color: #bbd49d;
+  color: #4d5c40;
   border: none;
   border-radius: 5px;
   cursor: pointer;

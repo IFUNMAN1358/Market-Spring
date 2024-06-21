@@ -1,8 +1,6 @@
 <template>
   <div class="main-container">
-    <router-link v-if="isProductManager" :to="{ name: 'CreateProductComponent' }">
-      <button class="add-product-button">Добавить продукт</button>
-    </router-link>
+    <button v-if="hasRole('ROLE_PRODUCT_MANAGER')" @click="$router.push({name: 'CreateProductComponent'})" class="add-product-button">Добавить продукт</button>
     <div class="intro">
       <div class="intro-text">
         <input v-model="searchQuery" @input="filterProducts" placeholder="Поиск..." class="search-input" />
@@ -67,14 +65,12 @@
 
 <script>
 import debounce from 'lodash/debounce';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import CartIcon from '@/img/CartIcon.png';
 
 export default {
   name: 'CatalogComponent',
-
-
   data() {
     return {
       axiosUrl: this.$axios.defaults.baseURL,
@@ -92,9 +88,8 @@ export default {
       scrollPosition: 0,
     };
   },
-
   computed: {
-    ...mapState(["isProductManager"]),
+    ...mapGetters(['hasRole']),
     filteredProducts() {
       return Array.from(this.products).filter(product => {
         return (
@@ -110,8 +105,6 @@ export default {
       return this.filteredProducts.slice(0, this.currentPage * this.productsPerPage);
     },
   },
-
-
   methods: {
     viewProduct(productId) {
       this.$router.push({ name: 'ShowProductComponent', params: { id: productId } });
@@ -119,8 +112,6 @@ export default {
     addToCart(productId) {
       this.addToCart({ id: productId });
     },
-
-
     async getProducts(offset = 0, limit = 20, search = '', productType = '', brand = '', ageCategory = '', animalType = '') {
       try {
         const response = await this.$axios.get('/catalog', {
@@ -183,12 +174,22 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   watch: {
-    searchQuery: 'debouncedFilterProducts',
-    'filters.productType': 'debouncedFilterProducts',
-    'filters.brand': 'debouncedFilterProducts',
-    'filters.ageCategory': 'debouncedFilterProducts',
-    'filters.animalType': 'debouncedFilterProducts',
-  },
+    searchQuery() {
+      this.debouncedFilterProducts();
+    },
+    'filters.productType'() {
+      this.debouncedFilterProducts();
+    },
+    'filters.brand'() {
+      this.debouncedFilterProducts();
+    },
+    'filters.ageCategory'() {
+      this.debouncedFilterProducts();
+    },
+    'filters.animalType'() {
+      this.debouncedFilterProducts();
+    },
+  }
 };
 </script>
 

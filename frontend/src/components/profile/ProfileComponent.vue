@@ -7,13 +7,9 @@
       <p><strong>Email:</strong> {{ user.email }}</p>
     </div>
     <div class="profile-actions">
-      <router-link :to="{ name: 'OrdersComponent' }">
-        <button>История заказов</button>
-      </router-link>
-      <router-link :to="{ name: 'SettingsComponent'}">
-        <button>Настройки</button>
-      </router-link>
-      <button @click="logout">Выйти из аккаунта</button>
+      <button @click="$router.push({name: 'OrdersComponent'})" class="action-button">История заказов</button>
+      <button @click="$router.push({name: 'SettingsComponent'})" class="action-button">Настройки</button>
+      <button @click="logout" class="action-button">Выйти из аккаунта</button>
     </div>
   </div>
 </template>
@@ -46,7 +42,7 @@ export default {
     async logout() {
       try {
         await this.removeTokens();
-        this.$router.push({ name: 'MainComponent' })
+        this.$router.push({ name: 'MainComponent' });
       } catch (error) {
         console.error('Ошибка при выходе из аккаунта:', error.response ? error.response.data : error.message);
       }
@@ -88,9 +84,8 @@ export default {
   align-items: center;
 }
 
-.profile-actions button {
+.action-button {
   width: 100%;
-  max-width: 200px;
   padding: 10px;
   background-color: #BBD49D;
   color: #566E3A;
@@ -101,7 +96,7 @@ export default {
   margin: 5px 0;
 }
 
-.profile-actions button:hover {
+.action-button:hover {
   background-color: #a7bf8f;
 }
 </style>

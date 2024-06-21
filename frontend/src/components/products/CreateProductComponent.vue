@@ -62,6 +62,7 @@
 <script>
 export default {
   name: 'ProductForm',
+
   data() {
     return {
       product: {
@@ -81,6 +82,7 @@ export default {
       imageFile: null
     }
   },
+
   methods: {
     handleImageUpload(event) {
       this.imageFile = event.target.files[0];
@@ -101,7 +103,7 @@ export default {
           }
         });
         console.log(response.data);
-        this.$emit('closeCreateProduct', response.data);
+        this.$router.push({ name: 'CatalogComponent'});
       } catch (error) {
         console.error('Ошибка при создании продукта:', error.response ? error.response.data : error.message);
       }

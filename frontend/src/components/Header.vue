@@ -15,9 +15,14 @@
           <li class="nav-item">
             <router-link :to="{ name: 'CatalogComponent' }" class="nav-link">КАТАЛОГ</router-link>
           </li>
-          <li class="nav-item">
+
+          <li v-if="hasRole('ROLE_SUPPORT')" class="nav-item">
+            <router-link :to="{ name: 'ShowSupportComponent' }" class="nav-link">ПОДДЕРЖКА</router-link>
+          </li>
+          <li v-else class="nav-item">
             <router-link :to="{ name: 'CreateSupportComponent' }" class="nav-link">ПОДДЕРЖКА</router-link>
           </li>
+
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item" v-if="!isAuthenticated">
@@ -39,12 +44,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: 'HeaderComponent',
   computed: {
-    ...mapState(['isAuthenticated'])
+    ...mapState(['isAuthenticated']),
+    ...mapGetters(['hasRole'])
   }
 };
 </script>
