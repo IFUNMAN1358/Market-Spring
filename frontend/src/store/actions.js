@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import VueCookies from 'vue-cookies';
-import axios from '@/axios.js';
+import axios from 'axios';
 
 export default {
 
@@ -23,11 +23,27 @@ export default {
     commit('setAdminRole', roles.includes('ROLE_ADMIN'));
   },
 
-  ///////////////////////////////////////////////////
-  // Check Auth
-  ///////////////////////////////////////////////////
+  async refreshToken({ commit, dispatch }) {
+    const refreshToken = VueCookies.get('refreshToken');
+    if (refreshToken) {
+      try {
+        const response = await axios.post('/token', { refreshToken });
+        const { accessToken } = response.data;
+        VueCookies.set('accessToken', accessToken, { secure: true, httpOnly: true });
+        const newDecodedToken = jwtDecode(accessToken);
+        commit('setAuthenticated', true);
+        dispatch("checkRole", newDecodedToken.roles);
+      } catch (error) {
+        dispatch('removeTokens');
+        commit('setAuthenticated', false);
+      }
+    } else {
+      dispatch('removeTokens');
+      commit('setAuthenticated', false);
+    }
+  },
 
-  checkAuth({ commit, dispatch }) {
+  async checkAuth({ commit, dispatch }) {
     const token = VueCookies.get('accessToken');
     if (token) {
       try {
@@ -37,35 +53,16 @@ export default {
           commit('setAuthenticated', true);
           dispatch("checkRole", decodedToken.roles);
         } else {
-          commit('setAuthenticated', false);
+          await dispatch('refreshToken');
         }
       } catch (error) {
         commit('setAuthenticated', false);
+        await dispatch('refreshToken');
       }
     } else {
       commit('clearRoles');
       commit('setAuthenticated', false);
     }
-  },
-
-  ///////////////////////////////////////////////////
-  // Refresh Token
-  ///////////////////////////////////////////////////
-
-  async refreshToken({ commit, dispatch }) {
-    const refreshToken = VueCookies.get('refreshToken');
-    if (refreshToken) {
-      try {
-        const response = await axios.post('/token', { refreshToken });
-        const { accessToken } = response.data;
-        VueCookies.set('accessToken', accessToken, { secure: true, httpOnly: true });
-        commit('setAuthenticated', true);
-      } catch (error) {
-        dispatch('removeTokens');
-      }
-    } else {
-      dispatch('removeTokens');
-    }
-  },
+  }
 
 };

@@ -10,8 +10,9 @@
           <label for="filter-type">Тип продукта:</label>
           <select id="filter-type" v-model="filters.productType" @change="filterProducts" class="filter-select">
             <option value="">Все</option>
-            <option value="dry">Сухой</option>
-            <option value="wet">Влажный</option>
+            <option value="сухой">Сухой</option>
+            <option value="влажный">Влажный</option>
+            <option value="консервированный">Консервированный</option>
           </select>
         </div>
         <div class="filter-group">
@@ -21,23 +22,26 @@
             <option value="PurinaOne">PurinaOne</option>
             <option value="Whiskas">Whiskas</option>
             <option value="Kitekat">Kitekat</option>
+            <option value="RoyalCanin">Royal Canin</option>
+            <option value="Hills">Hill's</option>
+            <option value="Orijen">Orijen</option>
           </select>
         </div>
         <div class="filter-group">
           <label for="filter-age">Возрастная категория:</label>
           <select id="filter-age" v-model="filters.ageCategory" @change="filterProducts" class="filter-select">
             <option value="">Все</option>
-            <option value="children">Для детей</option>
-            <option value="adult">Для взрослых</option>
-            <option value="senior">Для пожилых</option>
+            <option value="для детей">Для детей</option>
+            <option value="для взрослых">Для взрослых</option>
+            <option value="для пожилых">Для пожилых</option>
           </select>
         </div>
         <div class="filter-group">
           <label for="filter-animal">Тип животного:</label>
           <select id="filter-animal" v-model="filters.animalType" @change="filterProducts" class="filter-select">
             <option value="">Все</option>
-            <option value="cat">Кошачий</option>
-            <option value="dog">Собачий</option>
+            <option value="кошачий">Кошачий</option>
+            <option value="собачий">Собачий</option>
           </select>
         </div>
       </div>
@@ -45,16 +49,18 @@
     <div class="catalog">
       <div class="products-wrapper">
         <div class="products">
-          <div v-for="product in paginatedProducts" :key="product.id" class="product" @click="viewProduct(product.id)">
-            <img :src="`${axiosUrl}${product.imageUrl}`" :alt="product.productName" class="product-image" />
+          <div v-for="product in paginatedProducts" :key="product.id" class="product">
+            <div class="product-image-container" @click="$router.push({ name: 'ShowProductComponent', params: { id: product.id } })">
+              <img :src="`${axiosUrl}${product.imageUrl}`" :alt="product.productName" class="product-image" />
+            </div>
             <div class="product-info">
               <h3 class="product-name">{{ product.productName }}</h3>
               <p class="product-weight">Вес: {{ product.productWeight }} гр.</p>
               <p class="product-price">Цена: {{ product.price }} руб.</p>
+              <button v-if="hasRole('ROLE_USER')" @click="addToCart(product.id)" class="add-to-cart">
+                <img :src="CartIcon" alt="Добавить в корзину" />
+              </button>
             </div>
-            <button @click.stop="addToCart(product)" class="add-to-cart">
-              <img :src="CartIcon" alt="Добавить в корзину" />
-            </button>
           </div>
         </div>
       </div>
@@ -65,9 +71,11 @@
 
 <script>
 import debounce from 'lodash/debounce';
-import { mapGetters } from 'vuex';
+import { mapGetters} from 'vuex';
 
 import CartIcon from '@/img/CartIcon.png';
+import VueCookies from "vue-cookies";
+import axios from "axios";
 
 export default {
   name: 'CatalogComponent',
@@ -106,11 +114,22 @@ export default {
     },
   },
   methods: {
-    viewProduct(productId) {
-      this.$router.push({ name: 'ShowProductComponent', params: { id: productId } });
-    },
-    addToCart(productId) {
-      this.addToCart({ id: productId });
+    async addToCart(productId) {
+      try {
+        const token = VueCookies.get("accessToken");
+        const response = await axios.post(
+          "/cart",
+          { productId: productId },
+          {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
     },
     async getProducts(offset = 0, limit = 20, search = '', productType = '', brand = '', ageCategory = '', animalType = '') {
       try {
@@ -281,8 +300,8 @@ export default {
 .products {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  max-width: 1500px;
+  justify-content: space-between;
+  max-width: 1200px;
   width: 100%;
 }
 
@@ -291,10 +310,9 @@ export default {
   color: #566e3a;
   border-radius: 10px;
   padding: 10px;
-  margin: 10px 3px;
-  width: calc(25% - 5px);
+  margin: 10px;
+  width: calc(25% - 20px);
   text-align: center;
-  cursor: pointer;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -306,9 +324,20 @@ export default {
   transform: translateY(-5px);
 }
 
+.product-image-container {
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
 .product-image {
   max-width: 100%;
+  max-height: 100%;
   border-radius: 10px;
+  object-fit: cover;
+  align-self: center;
 }
 
 .product-info {
@@ -354,7 +383,7 @@ export default {
 
 .scroll-to-top {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   padding: 20px 35px;
   background-color: #4d5c40;
@@ -371,27 +400,23 @@ export default {
   background-color: #36442d;
 }
 
-@media (max-width: 768px) {
-  .products {
-    justify-content: center;
-  }
-
+@media (max-width: 1200px) {
   .product {
-    width: calc(45% - 5px);
-  }
-
-  .product-name {
-    font-size: 0.9rem;
-  }
-
-  .product-weight,
-  .product-price {
-    font-size: 0.8rem;
-  }
-
-  .add-to-cart {
-    padding: 8px 16px;
-    bottom: 5px;
+    width: calc(33.33% - 20px);
   }
 }
+
+@media (max-width: 900px) {
+  .product {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 600px) {
+  .product {
+    width: calc(100% - 20px);
+  }
+}
+
+
 </style>

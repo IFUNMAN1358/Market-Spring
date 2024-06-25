@@ -37,18 +37,29 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
+                // ALL
                 .requestMatchers("/register", "/login", "/token").permitAll()
                 .requestMatchers(HttpMethod.GET, "/catalog").permitAll()
                 .requestMatchers(HttpMethod.GET, "/catalog/{id}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/support").permitAll()
 
+                // USER
                 .requestMatchers("/user", "/user/*").hasRole("USER")
+                .requestMatchers("/cart", "/cart/{productId}").hasRole("USER")
+                .requestMatchers("/order", "/order/{id}").hasRole("USER")
 
+                // PRODUCT_MANAGER
                 .requestMatchers(HttpMethod.POST, "/catalog").hasRole("PRODUCT_MANAGER")
                 .requestMatchers(HttpMethod.PATCH, "/catalog/{id}").hasRole("PRODUCT_MANAGER")
                 .requestMatchers(HttpMethod.DELETE, "/catalog/{id}").hasRole("PRODUCT_MANAGER")
 
-                //.requestMatchers("").hasRole("SUPPORT")
-                //.requestMatchers("").hasRole("ADMIN")
+                // SUPPORT
+                .requestMatchers(HttpMethod.GET, "/support").hasRole("SUPPORT")
+                .requestMatchers("/support/*").hasRole("SUPPORT")
+
+                // ADMIN
+                .requestMatchers("/role/*").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
             )
             .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);

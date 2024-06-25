@@ -23,7 +23,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
 
-    public void save(Product product) {
+    public void saveProduct(Product product) {
         productRepository.save(product);
     }
 
@@ -31,6 +31,14 @@ public class ProductService {
         return productRepository.findProductById(id).orElseThrow(
                 () -> new ProductNotFoundException("Product not found")
         );
+    }
+
+    public void deleteProduct(Product product) throws ProductNotFoundException {
+        try {
+            productRepository.delete(product);
+        } catch (Exception e) {
+            throw new ProductNotFoundException("Product not found");
+        }
     }
 
     public List<Product> getProducts(Integer offset, Integer limit, String search, String productType, String brand, String ageCategory, String animalType) {

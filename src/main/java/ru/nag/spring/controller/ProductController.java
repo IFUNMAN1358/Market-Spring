@@ -55,7 +55,7 @@ public class ProductController {
         product.setImageUrl(imageUrl);
 
         productService.updateProductFromForm(product, productForm);
-        productService.save(product);
+        productService.saveProduct(product);
 
         return ResponseEntity.ok("Product created");
     }
@@ -73,15 +73,20 @@ public class ProductController {
         product.setImageUrl(imageUrl);
 
         productService.updateProductFromForm(product, productForm);
-        productService.save(product);
+        productService.saveProduct(product);
 
         return ResponseEntity.ok("Product updated");
     }
 
     @DeleteMapping("/catalog/{id}") // PRODUCT_MANAGER
-    public ResponseEntity<String> deleteProduct(@PathVariable String id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable Integer id) throws ProductNotFoundException {
         JwtAuthentication authInfo = authService.getAuthInfo();
-        return ResponseEntity.ok("ok");
+
+        Product product = productService.getProductById(id);
+        imageService.deleteProductImageUrl(product.getImageUrl());
+        productService.deleteProduct(product);
+
+        return ResponseEntity.ok("Product deleted");
     }
 
 }

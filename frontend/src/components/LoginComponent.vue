@@ -44,6 +44,7 @@ export default {
 
       } catch (error) {
         console.error('Ошибка при входе:', error.response ? error.response.data : error.message);
+        alert("Ошибка входа");
       }
     }
   }

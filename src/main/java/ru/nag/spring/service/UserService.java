@@ -4,11 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.nag.spring.domain.Order;
 import ru.nag.spring.domain.Role;
 import ru.nag.spring.domain.User;
+import ru.nag.spring.dto.response.UserResponse;
+import ru.nag.spring.exception.OrderException.OrdersNotFoundException;
+import ru.nag.spring.exception.UserException.RoleNotFoundException;
 import ru.nag.spring.exception.UserException.UserAlreadyExistsException;
 import ru.nag.spring.exception.UserException.UserNotFoundException;
-import ru.nag.spring.repository.RoleRepository;
 import ru.nag.spring.repository.UserRepository;
 
 import java.util.*;
@@ -18,8 +21,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserService{
 
+    private final OrderService orderService;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
     public void save(User user) {
@@ -27,7 +31,7 @@ public class UserService{
     }
 
     @Transactional
-    public void registerUser(User user) throws UserAlreadyExistsException {
+    public void registerUser(User user) throws UserAlreadyExistsException, RoleNotFoundException {
         if (userRepository.existsUserByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException("User with this email already exists");
         }
@@ -35,12 +39,12 @@ public class UserService{
                 passwordEncoder.encode(user.getPassword())
         );
 
-        Role role = roleRepository.getRoleByName("ROLE_USER");
+        Role role = roleService.getRoleByName("ROLE_USER");
 
         Set<Role> roles = new HashSet<>();
         roles.add(role);
-        user.setRoles(roles);
 
+        user.setRoles(roles);
         userRepository.save(user);
     }
 
@@ -54,6 +58,17 @@ public class UserService{
                 .orElseThrow(() -> new UserNotFoundException("User with this email not found"));
     }
 
+    public User getUserByEmailOrId(String ident) throws UserNotFoundException {
+        try {
+            UUID uuid = UUID.fromString(ident);
+            return userRepository.findUserById(uuid)
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id"));
+        } catch (IllegalArgumentException e) {
+            return userRepository.findUserByEmail(ident)
+                    .orElseThrow(() -> new UserNotFoundException("User not found with email"));
+        }
+    }
+
     public void updateUserPassword(User user, String newPassword) {
         user.setPassword(
                 passwordEncoder.encode(newPassword)
@@ -62,7 +77,7 @@ public class UserService{
     }
 
     @Transactional
-    public void deleteUserById(UUID id) throws UserNotFoundException {
+    public void deleteUserById(UUID id) throws UserNotFoundException, OrdersNotFoundException {
         Optional<User> userOptional = userRepository.findUserById(id);
 
         if (userOptional.isEmpty()) {
@@ -71,10 +86,30 @@ public class UserService{
 
         User user = userOptional.get();
 
-        user.getRoles().clear();
-        userRepository.save(user);
+        List<Order> userOrders = orderService.getAllByUser(user);
+        for (Order order : userOrders) {
+            order.setProducts(new ArrayList<>());
+            orderService.save(order);
+        }
+        orderService.deleteAllByUser(user);
 
+        user.getRoles().clear();
+        user.getProducts().clear();
+
+        userRepository.save(user);
         userRepository.deleteUserById(id);
+
+
+    }
+
+    public UserResponse convertUserToResponse(User user) {
+        return new UserResponse(
+            user.getId().toString(),
+            user.getName(),
+            user.getSurname(),
+            user.getEmail(),
+            user.getRoles()
+        );
     }
 
 }

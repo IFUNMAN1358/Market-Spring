@@ -18,16 +18,18 @@
       <p><strong>Цена:</strong> {{ product.price }} руб.</p>
     </div>
     <div class="product-actions">
-      <button @click="addToCart(product)" class="action-button">Добавить в корзину</button>
+      <button v-if="hasRole('ROLE_USER')" @click="addToCart(product.id)" class="action-button">Добавить в корзину</button>
       <button @click="$router.push({name: 'CatalogComponent'})" class="action-button">Назад к каталогу</button>
       <button v-if="hasRole('ROLE_PRODUCT_MANAGER')" @click="$router.push({name: 'UpdateProductComponent', params: { id: product.id }})" class="action-button">Редактировать</button>
-      <button v-if="hasRole('ROLE_PRODUCT_MANAGER')" @click="deleteProduct(product)" class="action-button">Удалить</button>
+      <button v-if="hasRole('ROLE_PRODUCT_MANAGER')" @click="deleteProduct(product)" class="delete-button">Удалить</button>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import VueCookies from "vue-cookies";
+import axios from "axios";
 
 export default {
   name: 'ShowProductComponent',
@@ -41,6 +43,23 @@ export default {
     ...mapGetters(['hasRole'])
   },
   methods: {
+    async addToCart(productId) {
+      try {
+        const token = VueCookies.get("accessToken");
+        const response = await axios.post(
+          "/cart",
+          { productId: productId },
+          {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async fetchProduct() {
       try {
         const response = await this.$axios.get(`/catalog/${this.$route.params.id}`);
@@ -49,17 +68,20 @@ export default {
         console.error('Ошибка при получении товара:', error);
       }
     },
-    addToCart(product) {
-      this.addToCart({ id: product.id });
-    },
     async deleteProduct(product) {
       try {
-        await this.$axios.delete(`/catalog/${product.id}`);
+        const token = this.$cookies.get('accessToken');
+        await this.$axios.delete(`/catalog/${product.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         this.$router.push({ name: 'CatalogComponent' });
       } catch (error) {
         console.error('Ошибка при удалении товара:', error);
       }
     }
+
   },
   mounted() {
     this.fetchProduct();
@@ -107,6 +129,18 @@ export default {
   padding: 10px 20px;
   background-color: #bbd49d;
   color: #4d5c40;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.delete-button {
+  padding: 10px 20px;
+  background-color: #FF6F61;
+  color: #F8F8F8;
   border: none;
   border-radius: 5px;
   cursor: pointer;

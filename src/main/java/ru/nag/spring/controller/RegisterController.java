@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.nag.spring.domain.User;
 import ru.nag.spring.dto.request.RegisterForm;
+import ru.nag.spring.exception.UserException.RoleNotFoundException;
 import ru.nag.spring.exception.UserException.UserAlreadyExistsException;
 import ru.nag.spring.service.UserService;
 
@@ -27,6 +28,8 @@ public class RegisterController {
             return ResponseEntity.ok("User has been registered");
         } catch (UserAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RoleNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

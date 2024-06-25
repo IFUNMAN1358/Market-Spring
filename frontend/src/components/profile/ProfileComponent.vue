@@ -7,7 +7,7 @@
       <p><strong>Email:</strong> {{ user.email }}</p>
     </div>
     <div class="profile-actions">
-      <button @click="$router.push({name: 'OrdersComponent'})" class="action-button">История заказов</button>
+      <button @click="$router.push({name: 'UserOrdersComponent'})" class="action-button">История заказов</button>
       <button @click="$router.push({name: 'SettingsComponent'})" class="action-button">Настройки</button>
       <button @click="logout" class="action-button">Выйти из аккаунта</button>
     </div>

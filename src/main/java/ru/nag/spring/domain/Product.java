@@ -1,10 +1,14 @@
 package ru.nag.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -58,5 +62,13 @@ public class Product {
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
+
+    @ManyToMany(mappedBy = "products")
+    @JsonIgnore
+    private List<User> users = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "products")
+    @JsonIgnore
+    private List<Order> orders = new ArrayList<>();
 
 }

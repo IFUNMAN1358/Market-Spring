@@ -47,4 +47,17 @@ public class User {
     public Set<String> getRoles() {
         return roles.stream().map(Role::getAuthority).collect(Collectors.toSet());
     }
+
+    public Set<Role> getRoles(boolean howRole) {
+        return this.roles;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_carts",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
+
 }

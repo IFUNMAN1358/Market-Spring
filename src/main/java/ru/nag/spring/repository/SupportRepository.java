@@ -2,14 +2,13 @@ package ru.nag.spring.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.nag.spring.domain.Role;
+import ru.nag.spring.domain.Support;
 
 import java.util.Optional;
 
-
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Integer> {
+public interface SupportRepository extends JpaRepository<Support, Integer> {
 
-    Optional<Role> findRoleByName(String name);
+    Optional<Support> findSupportById(Integer id);
 
 }

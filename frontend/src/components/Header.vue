@@ -23,6 +23,10 @@
             <router-link :to="{ name: 'CreateSupportComponent' }" class="nav-link">ПОДДЕРЖКА</router-link>
           </li>
 
+          <li v-if="hasRole('ROLE_ADMIN')" class="nav-item">
+            <router-link :to="{ name: 'RoleComponent' }" class="nav-link">РОЛИ</router-link>
+          </li>
+
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item" v-if="!isAuthenticated">

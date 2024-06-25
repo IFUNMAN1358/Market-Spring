@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import axios from "@/axios";
+import axios from '@/axios.js';
 import store from '@/store/index.js';
 import VueCookies from 'vue-cookies';
 import router from '@/router.js';

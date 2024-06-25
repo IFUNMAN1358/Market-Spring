@@ -8,6 +8,7 @@ import ru.nag.spring.dto.request.EmailRequest;
 import ru.nag.spring.dto.request.NameAndSurnameRequest;
 import ru.nag.spring.dto.request.PasswordRequest;
 import ru.nag.spring.dto.response.UserResponse;
+import ru.nag.spring.exception.OrderException.OrdersNotFoundException;
 import ru.nag.spring.exception.UserException.UserNotFoundException;
 import ru.nag.spring.jwt.JwtAuthentication;
 import ru.nag.spring.service.AuthService;
@@ -26,13 +27,8 @@ public class UserController {
     public ResponseEntity<UserResponse> getUser() throws UserNotFoundException {
         JwtAuthentication authInfo = authService.getAuthInfo();
         User user = userService.getUserById(UUID.fromString(authInfo.getId()));
-         UserResponse userResponse = new UserResponse(
-            user.getId().toString(),
-            user.getName(),
-            user.getSurname(),
-            user.getEmail(),
-            user.getRoles()
-        );
+
+        UserResponse userResponse = userService.convertUserToResponse(user);
         return ResponseEntity.ok(userResponse);
     }
 
@@ -45,13 +41,7 @@ public class UserController {
         user.setSurname(newData.getSurname());
         userService.save(user);
 
-        UserResponse userResponse = new UserResponse(
-            user.getId().toString(),
-            user.getName(),
-            user.getSurname(),
-            user.getEmail(),
-            user.getRoles()
-        );
+        UserResponse userResponse = userService.convertUserToResponse(user);
         return ResponseEntity.ok(userResponse);
     }
 
@@ -63,13 +53,7 @@ public class UserController {
         user.setEmail(newData.getEmail());
         userService.save(user);
 
-        UserResponse userResponse = new UserResponse(
-            user.getId().toString(),
-            user.getName(),
-            user.getSurname(),
-            user.getEmail(),
-            user.getRoles()
-        );
+        UserResponse userResponse = userService.convertUserToResponse(user);
         return ResponseEntity.ok(userResponse);
     }
 
@@ -85,7 +69,7 @@ public class UserController {
     }
 
     @DeleteMapping("/user")
-    public ResponseEntity<String> deleteUser() throws UserNotFoundException {
+    public ResponseEntity<String> deleteUser() throws UserNotFoundException, OrdersNotFoundException {
         JwtAuthentication authInfo = authService.getAuthInfo();
         userService.deleteUserById(UUID.fromString(authInfo.getId()));
         return ResponseEntity.ok("User deleted: " + authInfo.getId());
